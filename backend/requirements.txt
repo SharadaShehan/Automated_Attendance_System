@@ -1,0 +1,8 @@
+django
+djangorestframework
+django-environ
+# psycopg2
+psycopg2-binary==2.9.6
+Pillow
+django-apscheduler
+django-cors-headers
