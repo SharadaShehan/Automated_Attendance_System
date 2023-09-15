@@ -1,5 +1,5 @@
 """
-ASGI config for attendsense_prototype project.
+ASGI config for Automated_Attendance_System project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'attendsense_prototype.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 
 application = get_asgi_application()
