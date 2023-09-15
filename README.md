@@ -1,2 +1,1 @@
-# AttendSense
-Face recognition based automated attendance management system
+# Automated Attendance System
