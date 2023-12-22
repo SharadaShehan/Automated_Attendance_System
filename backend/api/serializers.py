@@ -76,13 +76,11 @@ class UserLoginSerializer(serializers.Serializer):
 class ExecutiveViewRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        read_only_fields = ['default_key', 'company']
         fields = ['id', 'name', 'is_manager', 'is_executive' ]
 
 class ExecutiveCreateRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        read_only_fields = ['default_key', 'company']
         fields = ['id', 'name', 'is_manager', 'is_executive' ]
 
     def create(self, validated_data):

@@ -6,7 +6,6 @@ class Role(models.Model):
     name = models.CharField(max_length=30, unique=False, null=False, blank=False)
     is_manager = models.BooleanField(default=False)
     is_executive = models.BooleanField(default=False)
-    default_key = models.BigIntegerField(default=0, editable=False, null=True, blank=True, unique=False)
 
 
 class UserManager(BaseUserManager):
@@ -68,3 +67,24 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ['first_name', 'last_name', 'picture']
 
     objects = UserManager()
+
+
+class CompanyInstanceManager(models.Manager):
+    def get_company(self):
+        instance, created = self.get_or_create(pk=1)
+        return instance
+
+
+class Company(models.Model):
+    name = models.CharField(max_length=30, unique=True, null=False, blank=False)
+    default_role = models.ForeignKey(Role, on_delete=models.CASCADE, null=False, blank=False)
+    username = models.CharField(max_length=50, null=False, blank=False, default="admin")
+    password = models.CharField(max_length=50, null=False, blank=False, default="password")
+
+    objects = CompanyInstanceManager()
+
+    def save(self, *args, **kwargs):
+        if not self.pk and Company.objects.exists():
+            raise Exception("Only one company can be created")
+        self.pk = 1
+        return super(Company, self).save(*args, **kwargs)
