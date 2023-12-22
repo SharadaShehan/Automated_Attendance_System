@@ -1,9 +1,9 @@
 from rest_framework import generics, views, response, status, permissions
-from database.models import CustomUser, Role, Company
-from .serializers import ExecutiveViewEmployeeSerializer, EmployeeViewEmployeeSerializer, ExecutiveUpdateEmployeeSerializer, EmployeeUpdateEmployeeSerializer, UserLoginSerializer, ExecutiveViewRoleSerializer, ExecutiveCreateRoleSerializer, ExecutiveViewCompanySerializer
+from database.models import CustomUser, Role
+from .serializers import ExecutiveViewEmployeeSerializer, EmployeeViewEmployeeSerializer, ExecutiveUpdateEmployeeSerializer, EmployeeUpdateEmployeeSerializer, UserLoginSerializer, ExecutiveViewRoleSerializer, ExecutiveCreateRoleSerializer
 from django.contrib.auth import authenticate, login, logout
-from .mixins import ProductionAuthentication, DebugSessionAuthentication, DebugFullAuthentication, ViewOnlyOwnCompanyRestriction, ViewOnlyOwnAccountRestriction
-from .permissions import ViewOwnAccountPermission, ViewAnyEmployeePermission, EditAnyEmployeePermission, ViewAllEmployeesPermission, ViewAnyRolePermission, ViewAllRolesPermission, ViewOwnCompanyPermission, DeleteOwnCompanyPermission, DeleteAnyRolePermission
+from .mixins import ProductionAuthentication, DebugSessionAuthentication, DebugFullAuthentication, ViewOnlyOwnAccountRestriction
+from .permissions import ViewOwnAccountPermission, ViewAnyEmployeePermission, EditAnyEmployeePermission, ViewAllEmployeesPermission, ViewAnyRolePermission, ViewAllRolesPermission, DeleteAnyRolePermission
 
 
 class SetAuthenticationMethod(DebugFullAuthentication): pass
@@ -42,7 +42,6 @@ class ExecutiveDeleteEmployeeView(SetAuthenticationMethod, generics.DestroyAPIVi
     queryset = CustomUser.objects.all()
     serializer_class = ExecutiveViewEmployeeSerializer
     permission_classes = [permissions.IsAuthenticated, EditAnyEmployeePermission]
-
 
 
 # User Authentication
@@ -102,22 +101,5 @@ class ExecutiveDeleteRoleView(SetAuthenticationMethod, generics.DestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, DeleteAnyRolePermission]
 
 
-
-# CRUD operations for Company Table
-
-class ExecutiveViewCompanyView(SetAuthenticationMethod, ViewOnlyOwnCompanyRestriction, generics.RetrieveAPIView):
-    queryset = Company.objects.all()
-    serializer_class = ExecutiveViewCompanySerializer
-    permission_classes = [permissions.IsAuthenticated, ViewOwnCompanyPermission]
-
-class ExecutiveUpdateCompanyView(SetAuthenticationMethod, ViewOnlyOwnCompanyRestriction, generics.UpdateAPIView):
-    queryset = Company.objects.all()
-    serializer_class = ExecutiveViewCompanySerializer
-    permission_classes = [permissions.IsAuthenticated, ViewOwnCompanyPermission]
-
-class ExecutiveDeleteCompanyView(SetAuthenticationMethod, ViewOnlyOwnCompanyRestriction, generics.DestroyAPIView):
-    queryset = Company.objects.all()
-    serializer_class = ExecutiveViewCompanySerializer
-    permission_classes = [permissions.IsAuthenticated, DeleteOwnCompanyPermission]
 
 

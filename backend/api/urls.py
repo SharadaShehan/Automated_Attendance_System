@@ -20,9 +20,5 @@ urlpatterns = [
     path('executive/update/role/<int:pk>', views.ExecutiveUpdateRoleView.as_view()),
     path('executive/delete/role/<int:pk>', views.ExecutiveDeleteRoleView.as_view()),
 
-    path('executive/view/company/', views.ExecutiveViewCompanyView.as_view()),
-    path('executive/update/company/', views.ExecutiveUpdateCompanyView.as_view()),
-    path('executive/delete/company/', views.ExecutiveDeleteCompanyView.as_view()),
-
     path('auth/', CustomObtainAuthToken.as_view()),
 ]

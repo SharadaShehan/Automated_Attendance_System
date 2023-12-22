@@ -1,5 +1,5 @@
-django
-djangorestframework
+django~=5.0
+djangorestframework~=3.14.0
 django-environ
 # psycopg2
 psycopg2-binary==2.9.6

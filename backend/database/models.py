@@ -8,6 +8,7 @@ class Role(models.Model):
     is_executive = models.BooleanField(default=False)
     default_key = models.BigIntegerField(default=0, editable=False, null=True, blank=True, unique=False)
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email=None, password=None, role=None, first_name="", last_name="", picture=None,
                     attendance=None, notifications=False, *args, **kwargs):
@@ -47,6 +48,7 @@ class UserManager(BaseUserManager):
         )
         return user
 
+
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, null=False, blank=False)
     role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True, blank=True)
@@ -62,10 +64,7 @@ class CustomUser(AbstractUser):
     is_active = models.BooleanField(default=True, editable=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'picture']    # This specifies which fields are required along with USERNAME_FIELD and password for user registration
+    # This specifies which fields are required along with USERNAME_FIELD and password for user registration
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'picture']
 
     objects = UserManager()
-
-
-
-

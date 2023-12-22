@@ -49,4 +49,3 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             instance.set_password(new_password)
 
         return super().update(instance, validated_data)
-

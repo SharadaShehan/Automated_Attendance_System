@@ -88,8 +88,6 @@ class AccountDeleteViewByNonOwner(generics.RetrieveDestroyAPIView):
     serializer_class = UserDetailSerializer
 
 
-
-
 # class AccountCreateViewByNonOwner(APIView):
 #     def post(self, request):
 #         serializer = UserRegistrationSerializer(data=request.data)

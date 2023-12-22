@@ -1,8 +1,8 @@
 from django.urls import path
 from . import views
 
-# app_name = 'api'
-urlpatterns =[
+# app_name = 'database'
+urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login-view'),
     path('logout/', views.CustomLogoutView.as_view(), name='logout-view'),
     path('signup/', views.SignUpView.as_view(), name='signup-view'),
@@ -16,4 +16,3 @@ urlpatterns =[
     path('update/<int:pk>/', views.AccountUpdateViewByNonOwner.as_view()),
     path('delete/<int:pk>/', views.AccountDeleteViewByNonOwner.as_view()),
 ]
-

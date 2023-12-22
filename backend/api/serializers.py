@@ -1,4 +1,4 @@
-from database.models import CustomUser, Role, Company
+from database.models import CustomUser, Role
 from rest_framework import serializers
 
 
@@ -6,9 +6,11 @@ class ExecutiveViewEmployeeSerializer(serializers.ModelSerializer):
     role_name = serializers.SerializerMethodField()
     is_manager = serializers.SerializerMethodField()
     is_executive = serializers.SerializerMethodField()
+
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'role_name', 'is_manager', 'is_executive', 'first_name', 'last_name', 'picture', 'attendance']
+        fields = ['id', 'email', 'role_name', 'is_manager', 'is_executive', 'first_name', 'last_name', 'picture',
+                  'attendance']
 
     def get_role_name(self, obj):
         try:
@@ -32,7 +34,8 @@ class ExecutiveViewEmployeeSerializer(serializers.ModelSerializer):
 class EmployeeViewEmployeeSerializer(ExecutiveViewEmployeeSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'role_name', 'is_manager', 'is_executive', 'first_name', 'last_name', 'picture', 'attendance', 'email_notifications']
+        fields = ['id', 'email', 'role_name', 'is_manager', 'is_executive', 'first_name', 'last_name', 'picture',
+                  'attendance', 'notifications']
 
 
 class EmployeeUpdateEmployeeSerializer(serializers.ModelSerializer):
@@ -60,16 +63,14 @@ class EmployeeUpdateEmployeeSerializer(serializers.ModelSerializer):
 class ExecutiveUpdateEmployeeSerializer(ExecutiveViewEmployeeSerializer):
     class Meta:
         model = CustomUser
-        read_only_fields = ['password', 'company', ' user_api_code', 'email_notifications' ]
-        fields = ['email', 'role', 'role_name', 'is_manager', 'is_executive', 'first_name', 'last_name', 'picture', 'attendance']
-
-
+        read_only_fields = ['id', 'password', 'notifications', 'picture']
+        fields = ['id', 'email', 'role', 'role_name', 'is_manager', 'is_executive', 'first_name', 'last_name',
+                  'attendance']
 
 
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField()
-
 
 
 class ExecutiveViewRoleSerializer(serializers.ModelSerializer):
@@ -93,11 +94,4 @@ class ExecutiveCreateRoleSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Login with a authorized account")
         return super().create(validated_data)
 
-
-
-class ExecutiveViewCompanySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Company
-        read_only_fields = ['default_role_key', 'company_api_code']
-        fields = ['name', 'logo', 'style_guide' ]
 

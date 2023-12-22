@@ -1,6 +1,7 @@
 from rest_framework import permissions
 from database.models import CustomUser
 
+
 class ViewAnyEmployeePermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.role.is_manager or request.user.role.is_executive :
@@ -8,40 +9,41 @@ class ViewAnyEmployeePermission(permissions.BasePermission):
                 return True
         return False
 
+
 class ViewOwnAccountPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.id == obj.id:
             return True
         return False
 
-class EditAnyEmployeePermission(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.user.role.is_executive :
-            if request.user.company.id == obj.company.id:
-                return True
-        return False
 
-class ViewAllEmployeesPermission(permissions.BasePermission):
+class EditAnyEmployeePermission(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.user.role.is_manager or request.user.role.is_executive :
+        if request.user.role.is_executive:
             return True
         return False
 
 
+class ViewAllEmployeesPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.role.is_manager or request.user.role.is_executive:
+            return True
+        return False
 
 
 class ViewAnyRolePermission(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.user.role.is_executive :
-            if request.user.company.id == obj.company.id:
-                return True
+    def has_permission(self, request, view):
+        if request.user.role.is_executive:
+            return True
         return False
+
 
 class ViewAllRolesPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.user.role.is_executive :
             return True
         return False
+
 
 class DeleteAnyRolePermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -54,18 +56,3 @@ class DeleteAnyRolePermission(permissions.BasePermission):
                     return True
         return False
 
-
-
-class ViewOwnCompanyPermission(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.user.role.is_executive :
-            if request.user.company.id == obj.id:
-                return True
-        return False
-
-class DeleteOwnCompanyPermission(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.user.role.is_executive :
-            if request.user.company.id == obj.id:
-                return True
-        return False
