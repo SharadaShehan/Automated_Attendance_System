@@ -11,8 +11,8 @@ class HomePage(tk.Frame):
         label = tk.Label(self, text="AttendSense", font=("Helvetica", 20))
         label.pack(pady=10, padx=10)
 
-        button = ttk.Button(self, text="Run App", style='Custom.TButton', command=lambda: controller.notebook.select(2))
+        button = ttk.Button(self, text="Run App", style='Custom.TButton', command=lambda: controller.notebook.select(3))
         button.pack(pady=10)
 
-        button = ttk.Button(self, text="Register User", style='Custom.TButton', command=lambda: controller.notebook.select(3))
+        button = ttk.Button(self, text="Register User", style='Custom.TButton', command=lambda: controller.notebook.select(4))
         button.pack(pady=10)
