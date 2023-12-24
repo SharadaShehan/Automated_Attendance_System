@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
-import re, cv2
+import re, cv2, json, requests
 from PIL import Image, ImageTk
+from functions import JSONConfig
 
 class OnBoardingPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -53,29 +54,40 @@ class OnBoardingPage(tk.Frame):
         label = tk.Label(self.left_frame, text="Password :", font=("Helvetica", 12))
         label.pack(pady=(10, 5), padx=10)
 
-        self.password_entry = tk.Entry(self.left_frame, width=30, font=("Helvetica", 14), show="*")
-        self.password_entry.pack(padx=20)
+        self.company_password_entry = tk.Entry(self.left_frame, width=30, font=("Helvetica", 14), show="*")
+        self.company_password_entry.pack(padx=20)
 
         # Register Default Executive User
 
         label = tk.Label(self.right_frame, text="Register Default Executive User", font=("Helvetica", 14))
-        label.pack(pady=(10, 10), padx=10)
+        label.pack(pady=(10, 5), padx=10)
 
-        ttk.Label(self.right_frame, text="Email :", font=("Helvetica", 12)).pack(padx=(5, 5), pady=(10, 5))
+        ttk.Label(self.right_frame, text="Email :", font=("Helvetica", 12)).pack(padx=(5, 5), pady=(7, 3))
         self.email_entry = ttk.Entry(self.right_frame, width=30, font=("Helvetica", 12))
         self.email_entry.pack(padx=20)
 
-        ttk.Label(self.right_frame, text="Password :", font=("Helvetica", 12)).pack(padx=(5, 5), pady=(10, 5))
+        ttk.Label(self.right_frame, text="Password :", font=("Helvetica", 12)).pack(padx=(5, 5), pady=(7, 3))
         self.password_entry = ttk.Entry(self.right_frame, width=30, font=("Helvetica", 12), show="*")
         self.password_entry.pack(padx=20)
 
-        ttk.Label(self.right_frame, text="First Name :", font=("Helvetica", 12)).pack(padx=(5, 5), pady=(10, 5))
+        ttk.Label(self.right_frame, text="First Name :", font=("Helvetica", 12)).pack(padx=(5, 5), pady=(7, 3))
         self.first_name_entry = ttk.Entry(self.right_frame, width=30, font=("Helvetica", 12))
         self.first_name_entry.pack(padx=20)
 
-        ttk.Label(self.right_frame, text="Last Name :", font=("Helvetica", 12)).pack(padx=(5, 5), pady=(10, 5))
+        ttk.Label(self.right_frame, text="Last Name :", font=("Helvetica", 12)).pack(padx=(5, 5), pady=(7, 3))
         self.last_name_entry = ttk.Entry(self.right_frame, width=30, font=("Helvetica", 12))
-        self.last_name_entry.pack(padx=20)
+        self.last_name_entry.pack(padx=20, pady=(0, 8))
+
+        self.radio_var = tk.StringVar()
+        self.radio_var.set("Option 1")
+
+        ttk.Label(self.right_frame, text="Gender :", font=("Helvetica", 12)).pack(padx=(40, 5), side=tk.LEFT)
+
+        radio_button1 = tk.Radiobutton(self.right_frame, text="Male", variable=self.radio_var, value="Male", font=("Helvetica", 12))
+        radio_button1.pack(side=tk.LEFT, padx=(5, 5))
+
+        radio_button2 = tk.Radiobutton(self.right_frame, text="Female", variable=self.radio_var, value="Female",font=("Helvetica", 12))
+        radio_button2.pack(side=tk.LEFT, padx=(5, 5))
 
         self.bottom_top_right_frame = tk.Frame(self.bottom_top_frame)
         self.bottom_top_right_frame.pack(side=tk.RIGHT)
@@ -102,35 +114,6 @@ class OnBoardingPage(tk.Frame):
         button = ttk.Button(self.bottom_bottom_frame, text="Register", style='Custom.TButton', command=self.register_company)
         button.pack(side=tk.LEFT, padx=(0, 10))
 
-    def snap_photo(self):
-        cap = cv2.VideoCapture(0)
-        ret, frame = cap.read()
-        cap.release()
-        self.photo = frame
-
-        # Convert the OpenCV frame to a format compatible with Tkinter
-        pil_image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-
-        # Resize the image to your desired dimensions (e.g., 200x150)
-        resized_image = pil_image.resize((200, 150), Image.ANTIALIAS)
-
-        # Convert the resized image to a PhotoImage
-        photo = ImageTk.PhotoImage(resized_image)
-
-        # Update the label with the new photo
-        self.photo_label.configure(image=photo)
-        self.photo_label.image = photo  # Keep a reference to prevent garbage collection
-
-        print("Photo taken!")
-
-    def show_error_message(self, message):
-        error_message = tk.Toplevel(self)
-        error_message.title("Error")
-        label = tk.Label(error_message, text=message, font=("Helvetica", 12))
-        label.pack(padx=10, pady=10)
-        ok_button = ttk.Button(error_message, text="OK", command=error_message.destroy)
-        ok_button.pack(pady=10)
-
     def validate_email(self, email):
         # Add email validation regex here
         return re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email)
@@ -143,17 +126,53 @@ class OnBoardingPage(tk.Frame):
         # Add your name validation regex here
         return re.match(r'^[a-zA-Z]+$', name)
 
+    def validate_gender(self, gender):
+        return True if gender in ["Male", "Female"] else False
+
     def validate_photo(self, photo):
         if photo is None:
             return False
         # Add your photo validation regex here
         return True
 
+    def show_error_message(self, message):
+        error_message = tk.Toplevel(self)
+        error_message.title("Error")
+        label = tk.Label(error_message, text=message, font=("Helvetica", 12))
+        label.pack(padx=10, pady=10)
+        ok_button = ttk.Button(error_message, text="OK", command=error_message.destroy)
+        ok_button.pack(pady=10)
+
+    def snap_photo(self):
+        cap = cv2.VideoCapture(0)
+        ret, frame = cap.read()
+        cap.release()
+
+        desired_width = 200
+        desired_height = 150
+        scaled_down_frame = cv2.resize(frame, (desired_width, desired_height))
+        color_corrected_frame = cv2.cvtColor(scaled_down_frame, cv2.COLOR_BGR2RGB)
+
+        self.photo = color_corrected_frame
+
+        # Convert the OpenCV frame to a format compatible with Tkinter
+        pil_image = Image.fromarray(color_corrected_frame)
+
+        # Convert the resized image to a PhotoImage
+        photo = ImageTk.PhotoImage(pil_image)
+
+        # Update the label with the new photo
+        self.photo_label.configure(image=photo)
+        self.photo_label.image = photo  # Keep a reference to prevent garbage collection
+
+        print("Photo taken!")
+
     def check_user_validity(self):
         email = self.email_entry.get()
         password = self.password_entry.get()
         first_name = self.first_name_entry.get()
         last_name = self.last_name_entry.get()
+        gender = self.radio_var.get()
         photo = self.photo
 
         if not self.validate_email(email):
@@ -170,6 +189,10 @@ class OnBoardingPage(tk.Frame):
 
         if not self.validate_name(last_name):
             self.show_error_message("Invalid last name!")
+            return False
+
+        if not self.validate_gender(gender):
+            self.show_error_message("Gender not selected!")
             return False
 
         if not self.validate_photo(photo):
@@ -193,7 +216,9 @@ class OnBoardingPage(tk.Frame):
     def register_company(self):
         company_name = self.company_name_entry.get()
         username = self.username_entry.get()
-        password = self.password_entry.get()
+        company_password = self.company_password_entry.get()
+
+        JSONConfig.create()
 
         # Validate inputs
         if not self.validate_company_name(company_name):
@@ -207,7 +232,7 @@ class OnBoardingPage(tk.Frame):
             contain only letters, numbers, and underscores.""")
             return
 
-        if not self.validate_cam_app_password(password):
+        if not self.validate_cam_app_password(company_password):
             self.show_error_message("""Invalid password. 
             Password should be at least 8 characters long and 
             contain at least one number and one special character.""")
@@ -216,11 +241,34 @@ class OnBoardingPage(tk.Frame):
         if not self.check_user_validity():
             return
 
-        # Now you can use the values as needed
-        print("Registering Company...")
-        print("Company Name:", company_name)
-        print("Username:", username)
-        print("Password:", password)
+        BaseURL = JSONConfig.read_url()
+        URL = BaseURL + "/create/company"
+
+        # Send the data to the server
+        data = {
+            "name": company_name,
+            "username": username,
+            "password": company_password,
+            "default_executive_account": {
+                "email": self.email_entry.get(),
+                "password": self.password_entry.get(),
+                "first_name": self.first_name_entry.get(),
+                "last_name": self.last_name_entry.get(),
+                "gender": self.radio_var.get(),
+                "photo": self.photo.tolist()
+            }
+        }
+        response = requests.post(URL, json=data)
+
+        # Check the response status code
+        if response.status_code != 201:
+            self.show_error_message("Error registering company!")
+            return
+        init_token = response.json()["init_token"]
+
+        # Save the company name to the config file
+        JSONConfig.update_company_name(company_name)
+        JSONConfig.update_init_token(init_token)
 
         # Example: Change to the next page in the notebook
         self.controller.notebook.select(1)

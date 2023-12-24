@@ -30,3 +30,4 @@ mediapipe~=0.10.2
 dlib~=19.24.2
 imutils~=0.5.4
 scipy~=1.9.3
+Werkzeug==2.3.7

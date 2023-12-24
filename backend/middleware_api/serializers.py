@@ -1,111 +1,84 @@
 from database.models import CustomUser, Role, Company
 from rest_framework import serializers, exceptions
-from random import randint
 import json
-
-
-with open('./middleware_api/api_code_range.txt', 'r') as file:
-    start_value = int(file.readline().strip())
-    end_value = int(file.readline().strip())
-if not  (int(start_value) and int(end_value)) :
-    raise Exception('api_code range is invalid')
+import face_recognition
+import numpy as np
+from werkzeug.security import generate_password_hash
 
 class MiddlewareCreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'password', 'user_api_code', 'first_name', 'last_name']
+        fields = ['email', 'password', 'first_name', 'last_name', 'gender']
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
-        company = self.get_company(); role = self.get_role(); user_api_code = self.get_user_api_code()
         user = super().create(validated_data)
-        user.company = company;  user.role = role;  user.user_api_code = user_api_code;  user.attendance = '{}'
+        user.role = Company.objects.get_company().default_role
+        user.attendance = '{}'
+
         if password:
             user.set_password(password)
             user.save()
+        else:
+            user.delete()
+            raise exceptions.ValidationError({'password': 'Password is required'})
+
+        try:
+            converted_photo = np.array(self.context['request'].data.get('photo')).astype(np.uint8)
+            encodings = face_recognition.face_encodings(converted_photo)[0]
+            json_encodings = json.dumps(encodings.tolist())
+            user.encodings = json_encodings
+        except:
+            user.delete()
+            raise exceptions.ValidationError({'photo': 'Invalid photo'})
+
         return user
-
-    def get_company(self):
-        try:
-            return Company.objects.get(company_api_code=self.context['request'].data.get('company_api_code'))
-        except Company.DoesNotExist:
-            raise serializers.ValidationError("Company doesn't exist")
-
-    def get_role(self):
-        try:
-            company = Company.objects.get(company_api_code=self.context['request'].data.get('company_api_code'))
-            return Role.objects.get(default_key=company.default_role_key)
-        except Role.DoesNotExist:
-            raise serializers.ValidationError("Role does not exist")
-
-    def get_user_api_code(self):
-        while True:
-            value = randint(start_value, end_value)
-            queryset = CustomUser.objects.filter(user_api_code=value).all()
-            if not queryset.exists():
-                return value
 
 
 class MiddlewareCreateCompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        fields = ['name', 'logo', 'style_guide','company_api_code', 'default_executive_id' , 'default_executive_api_code']
+        fields = ['name', 'username', 'password']
 
     def create(self, validated_data):
-        default_key = self.get_default_role_key()
-        company = Company.objects.create(name= validated_data.get('name'),
-                                         logo= validated_data.get('logo'),
-                                         style_guide= validated_data.get('style_guide'),
-                                         company_api_code= self.get_company_api_code(),
-                                         default_role_key= default_key)
-        default_employee_role = Role.objects.create(name='Employee', is_manager=False, is_executive=False, company=company, default_key=default_key)
-        default_executive_role = Role.objects.create(name='Executive', is_manager=True, is_executive=True, company= company)
+        default_executive_role = Role.objects.create(name='Executive', is_manager=True, is_executive=True)
+        default_employee_role = Role.objects.create(name='Employee', is_manager=False, is_executive=False)
         default_executive_account = self.context['request'].data.get('default_executive_account')
-
         try:
-            default_executive = CustomUser.objects.create(email= default_executive_account['email'] ,
-                                                          password= default_executive_account['password'],
-                                                          company= company,
-                                                          role= default_executive_role,
-                                                          user_api_code= self.get_executive_api_code(),
-                                                          first_name= default_executive_account['first_name'],
-                                                          last_name= default_executive_account['last_name'],
+            converted_photo = np.array(default_executive_account['photo']).astype(np.uint8)
+            encodings = face_recognition.face_encodings(converted_photo)[0]
+            json_encodings = json.dumps(encodings.tolist())
+            default_executive = CustomUser.objects.create(email=default_executive_account['email'],
+                                                          role=default_executive_role,
+                                                          first_name=default_executive_account['first_name'],
+                                                          last_name=default_executive_account['last_name'],
+                                                          gender=default_executive_account['gender'],
+                                                          encodings=json_encodings,
                                                           picture=None,
-                                                          attendance = '{}')
+                                                          attendance='{}')
             default_executive.set_password(default_executive_account['password'])
             default_executive.save()
-            company.default_executive_api_code = default_executive.user_api_code
-            company.default_executive_id = default_executive.id
+            company_password_hashed = generate_password_hash(validated_data.get('password').strip(), method='scrypt')
+            company = Company.objects.create(name=validated_data.get('name'),
+                                            username=validated_data.get('username'),
+                                            password=company_password_hashed,
+                                            default_role=default_employee_role)
             company.save()
         except Exception as ex:
-            Company.objects.filter(id=company.id).delete()
-            raise serializers.ValidationError("Invalid User Account Details")
-
+            if default_executive_role:
+                default_executive_role.delete()
+            if default_employee_role:
+                default_employee_role.delete()
+            try:
+                if default_executive:
+                    default_executive.delete()
+            except:
+                pass
+            raise serializers.ValidationError(f"Error in creating company: {ex}")
         return company
-
-    def get_company_api_code(self):
-        while True:
-            value = randint(start_value, end_value)
-            queryset = Company.objects.filter(company_api_code=value).all()
-            if not queryset.exists():
-                return value
-
-    def get_default_role_key(self):
-        while True:
-            value = randint(start_value, end_value)
-            queryset = Role.objects.filter(default_key=value).all()
-            if not queryset.exists():
-                return value
-
-    def get_executive_api_code(self):
-        while True:
-            value = randint(start_value, end_value)
-            queryset = CustomUser.objects.filter(user_api_code=value).all()
-            if not queryset.exists():
-                return value
 
 
 class MiddlewareUpdateUserAttendanceEnterSerializer(serializers.ModelSerializer):

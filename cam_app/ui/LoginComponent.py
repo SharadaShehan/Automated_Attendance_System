@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-import re
+import re, requests
+from functions import JSONConfig
 
 class LoginPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -10,11 +11,11 @@ class LoginPage(tk.Frame):
         label = tk.Label(self, text="Cam App Login", font=("Helvetica", 18))
         label.pack(pady=10, padx=10)
 
-        label = tk.Label(self, text="Email :", font=("Helvetica", 12))
+        label = tk.Label(self, text="Username :", font=("Helvetica", 12))
         label.pack(pady=(2, 0), padx=10)
 
-        self.email_entry = tk.Entry(self, width=30, font=("Helvetica", 14))
-        self.email_entry.pack(pady=10, padx=20)
+        self.username_entry = tk.Entry(self, width=30, font=("Helvetica", 14))
+        self.username_entry.pack(pady=10, padx=20)
 
         label = tk.Label(self, text="Password :", font=("Helvetica", 12))
         label.pack(pady=(2, 0), padx=10)
@@ -25,9 +26,9 @@ class LoginPage(tk.Frame):
         button = ttk.Button(self, text="login", command=self.app_login, style='Custom.TButton')
         button.pack(pady=10)
 
-    def validate_email(self, email):
+    def validate_username(self, username):
         # Add email validation regex here
-        return re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email)
+        return re.match(r'^[a-zA-Z0-9_]{4,30}$', username)
 
     def validate_password(self, password):
         # Add your password validation regex here
@@ -42,22 +43,36 @@ class LoginPage(tk.Frame):
         ok_button.pack(pady=10)
 
     def app_login(self):
-        email = self.email_entry.get()
+        username = self.username_entry.get()
         password = self.password_entry.get()
 
         # Validate inputs
-        if not self.validate_email(email):
-            self.show_error_message("Invalid email.")
+        if not self.validate_username(username):
+            self.show_error_message("Invalid username.")
             return
 
         if not self.validate_password(password):
             self.show_error_message("Invalid password.")
             return
 
-        # Now you can use the values as needed
-        print("Login In...")
-        print("Email:", email)
-        print("Password:", password)
+        BaseURL = JSONConfig.read_url()
+        URL = BaseURL + "/login"
+        init_token = JSONConfig.read_init_token()
 
-        # Example: Change to the next page in the notebook
-        self.controller.notebook.select(2)
+        data = {
+            "username": username,
+            "password": password
+        }
+        headers = {
+            "Authorization": init_token
+        }
+        response = requests.post(URL, json=data, headers=headers)
+
+        if response.status_code == 200:
+            access_token = response.json()["access_token"]
+            JSONConfig.update_access_token(access_token)
+            self.controller.notebook.select(2)
+        else:
+            self.show_error_message("Invalid Credentials.")
+            return
+

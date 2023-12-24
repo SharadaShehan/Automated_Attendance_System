@@ -7,8 +7,8 @@ class MyUserAdmin(UserAdmin):
     model = CustomUser
 
     fieldsets = (
-            (None, {'fields': ('email', 'first_name', 'last_name', 'encodings', 'picture', 'attendance', 'notifications', 'role',
-                               'username', 'is_staff', 'is_superuser', 'is_active')}),
+            (None, {'fields': ('email', 'first_name', 'last_name', 'gender', 'encodings', 'picture', 'attendance',
+                               'notifications', 'role', 'username', 'is_staff', 'is_superuser', 'is_active')}),
     )
 
 

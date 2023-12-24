@@ -2,7 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 import cv2
 from PIL import Image, ImageTk
-import re
+import re, requests
+from functions import JSONConfig
+
 
 class RegisterUserPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -29,6 +31,22 @@ class RegisterUserPage(tk.Frame):
         self.last_name_entry = ttk.Entry(self, width=30, font=("Helvetica", 12))
         self.last_name_entry.pack(padx=(5, 5), pady=(0, 10))
 
+        self.radio_var = tk.StringVar()
+        self.radio_var.set("Option 1")
+
+        self.gender_frame = tk.Frame(self)
+        self.gender_frame.pack(padx=(5, 5), pady=(0, 10))
+
+        ttk.Label(self.gender_frame, text="Gender :", font=("Helvetica", 12)).pack(padx=(30, 5), side=tk.LEFT)
+
+        radio_button1 = tk.Radiobutton(self.gender_frame, text="Male", variable=self.radio_var, value="Male",
+                                       font=("Helvetica", 12))
+        radio_button1.pack(side=tk.LEFT, padx=(5, 5))
+
+        radio_button2 = tk.Radiobutton(self.gender_frame, text="Female", variable=self.radio_var, value="Female",
+                                       font=("Helvetica", 12))
+        radio_button2.pack(side=tk.LEFT, padx=(5, 5))
+
         ttk.Label(self, text="Photo :", font=("Helvetica", 12)).pack(padx=(5, 5))
 
         self.photo_label = ttk.Label(self)
@@ -36,11 +54,14 @@ class RegisterUserPage(tk.Frame):
 
         ttk.Button(self, text="Snap Photo", style='Custom.TButton', command=self.snap_photo).pack(padx=(5, 5), pady=(0, 10))
 
-        button = ttk.Button(self, text="Cancel", style='Custom.TButton', command=lambda: controller.notebook.select(1))
-        button.pack(side=tk.LEFT, padx=(70, 5))
+        self.bottom_frame = tk.Frame(self)
+        self.bottom_frame.pack(padx=(5, 5), pady=(10, 10))
 
-        button = ttk.Button(self, text="Register", style='Custom.TButton', command=lambda: controller.notebook.select(1))
-        button.pack(side=tk.LEFT, padx=(0, 10))
+        button = ttk.Button(self.bottom_frame, text="Cancel", style='Custom.TButton', command=lambda: controller.notebook.select(1))
+        button.pack(side=tk.LEFT, padx=(5, 5))
+
+        button = ttk.Button(self.bottom_frame, text="Register", style='Custom.TButton', command=self.register_user)
+        button.pack(side=tk.LEFT, padx=(5, 5))
 
     def validate_email(self, email):
         # Add email validation regex here
@@ -54,7 +75,12 @@ class RegisterUserPage(tk.Frame):
         # Add your name validation regex here
         return re.match(r'^[a-zA-Z]+$', name)
 
+    def validate_gender(self, gender):
+        return True if gender in ["Male", "Female"] else False
+
     def validate_photo(self, photo):
+        if photo is None:
+            return False
         # Add your photo validation regex here
         return True
 
@@ -70,28 +96,30 @@ class RegisterUserPage(tk.Frame):
         cap = cv2.VideoCapture(0)
         ret, frame = cap.read()
         cap.release()
-        self.photo = frame
+
+        desired_width = 200
+        desired_height = 150
+        scaled_down_frame = cv2.resize(frame, (desired_width, desired_height))
+        color_corrected_frame = cv2.cvtColor(scaled_down_frame, cv2.COLOR_BGR2RGB)
+
+        self.photo = color_corrected_frame
 
         # Convert the OpenCV frame to a format compatible with Tkinter
-        pil_image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-
-        # Resize the image to your desired dimensions (e.g., 200x150)
-        resized_image = pil_image.resize((200, 150), Image.ANTIALIAS)
+        pil_image = Image.fromarray(color_corrected_frame)
 
         # Convert the resized image to a PhotoImage
-        photo = ImageTk.PhotoImage(resized_image)
+        photo = ImageTk.PhotoImage(pil_image)
 
         # Update the label with the new photo
         self.photo_label.configure(image=photo)
         self.photo_label.image = photo  # Keep a reference to prevent garbage collection
-
-        print("Photo taken!")
 
     def register_user(self):
         email = self.email_entry.get()
         password = self.password_entry.get()
         first_name = self.first_name_entry.get()
         last_name = self.last_name_entry.get()
+        gender = self.radio_var.get()
         photo = self.photo
 
         if not self.validate_email(email):
@@ -110,6 +138,34 @@ class RegisterUserPage(tk.Frame):
             self.show_error_message("Invalid last name!")
             return
 
+        if not self.validate_gender(gender):
+            self.show_error_message("Gender not selected!")
+            return
+
         if not self.validate_photo(photo):
             self.show_error_message("Invalid photo!")
             return
+
+        BaseURL = JSONConfig.read_url()
+        URL = BaseURL + "/create/user"
+        init_token = JSONConfig.read_init_token()
+
+        data = {
+            "email": email,
+            "password": password,
+            "first_name": first_name,
+            "last_name": last_name,
+            "gender": gender,
+            "photo": photo.tolist()
+        }
+        headers = {
+            "Authorization": init_token
+        }
+        response = requests.post(URL, json=data, headers=headers)
+
+        if response.status_code != 201:
+            self.show_error_message("Error registering user!")
+            return
+
+        self.show_error_message("User registered successfully!")
+        self.controller.notebook.select(2)

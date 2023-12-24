@@ -5,6 +5,7 @@ from .LoginComponent import LoginPage
 from .OnBoardingComponent import OnBoardingPage
 from .RegisterUserComponent import RegisterUserPage
 from .RunComponent import RunPage
+from functions import JSONConfig
 
 class UIApp(tk.Tk):
     def __init__(self):
@@ -12,7 +13,7 @@ class UIApp(tk.Tk):
 
         self.title("Cam App")
         self.width = 800
-        self.height = 600
+        self.height = 650
         self.geometry(f"{self.width}x{self.height}")
 
         style = ttk.Style()
@@ -35,4 +36,14 @@ class UIApp(tk.Tk):
         self.notebook.add(self.runAppPage, text="Run App")
         self.notebook.add(self.registerUserPage, text="Register User")
 
-        self.notebook.select(0)
+        # try:
+        #     company_name = JSONConfig.read_company_name()
+        #     if company_name == None:
+        #         self.notebook.select(0)
+        #     else:
+        #         self.notebook.select(1)
+        # except:
+        #     self.notebook.select(0)
+
+        self.notebook.select(4)
+
