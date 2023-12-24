@@ -64,10 +64,10 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=30, null=False, blank=False)
     last_name = models.CharField(max_length=30, null=False, blank=False)
     gender = models.CharField(max_length=10, null=False, blank=False)
-    encodings = models.JSONField(null=True, blank=True)
     picture = models.ImageField(upload_to='pictures/', null=True, blank=True)
     attendance = models.JSONField(null=True, blank=True)
     notifications = models.BooleanField(default=True)
+    encodings = models.JSONField(null=True, blank=True)
 
     username = models.CharField(max_length=50, unique=False, default="")
     is_staff = models.BooleanField(default=False, editable=False)

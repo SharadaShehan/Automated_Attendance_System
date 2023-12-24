@@ -3,6 +3,7 @@ from rest_framework import serializers, exceptions
 import json
 import face_recognition
 import numpy as np
+from .ml_model import MLModel
 from werkzeug.security import generate_password_hash
 
 
@@ -40,9 +41,18 @@ class MiddlewareCreateUserSerializer(serializers.ModelSerializer):
             json_encodings = json.dumps(encodings.tolist())
             user.encodings = json_encodings
             user.save()
-        except:
+            user_data = {'id': user.id,
+                         'first_name': user.first_name,
+                         'last_name': user.last_name,
+                         'gender': user.gender,
+                         'encodings': encodings}
+            success = MLModel.add_user_encodings(user_data)
+            if not success:
+                user.delete()
+                raise Exception('Failed to add user encodings to queue')
+        except Exception as e:
             user.delete()
-            raise exceptions.ValidationError({'message': 'Invalid photo'})
+            raise exceptions.ValidationError({'message': f'{e}'})
 
         return user
 

@@ -7,7 +7,7 @@ class RunPage(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        self.start_entrance_camera()
+        # self.start_entrance_camera()
 
         label = tk.Label(self, text="App is running...", font=("Helvetica", 16))
         label.pack(pady=10, padx=10)

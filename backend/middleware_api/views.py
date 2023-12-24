@@ -52,6 +52,11 @@ class MiddlewareUpdateUserAttendanceLeaveView(generics.UpdateAPIView):
 
 class MLModelInputView(APIView):
     def post(self, request, *args, **kwargs):
+        access_token = request.headers.get('Authorization', None)
+        if access_token is None:
+            return Response({'message': 'Access token is required'}, status=401)
+        elif access_token != Company.objects.get_company().access_token:
+            return Response({'message': 'Invalid access token'}, status=401)
         if MLModel.add_task(request.data):
             return Response({'message': 'Added task to queue'})
         return Response({'message': 'Failed to add task to queue'}, status=400)
