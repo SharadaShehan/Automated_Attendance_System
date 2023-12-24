@@ -58,15 +58,15 @@ class MLModelInputView(APIView):
         elif access_token != Company.objects.get_company().access_token:
             return Response({'message': 'Invalid access token'}, status=401)
         if MLModel.add_task(request.data):
-            return Response({'message': 'Added task to queue'})
+            return Response({'message': 'Task added to queue'})
         return Response({'message': 'Failed to add task to queue'}, status=400)
 
-class MLModelOutputView(APIView):
-    def get(self, request, *args, **kwargs):
-        data = MLModel.get_result()
-        if data is None:
-            return Response({'message': 'No data available'}, status=204)
-        return Response(data)
+# class MLModelOutputView(APIView):
+#     def get(self, request, *args, **kwargs):
+#         data = MLModel.get_result()
+#         if data is None:
+#             return Response({'message': 'No data available'}, status=204)
+#         return Response(data)
 
 class CompanyPortalLoginView(APIView):
     def post(self, request, *args, **kwargs):
