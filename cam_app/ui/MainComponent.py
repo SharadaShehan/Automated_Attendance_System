@@ -45,5 +45,5 @@ class UIApp(tk.Tk):
         # except:
         #     self.notebook.select(0)
 
-        self.notebook.select(4)
+        self.notebook.select(3)
 

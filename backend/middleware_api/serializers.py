@@ -5,6 +5,7 @@ import face_recognition
 import numpy as np
 from werkzeug.security import generate_password_hash
 
+
 class MiddlewareCreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 

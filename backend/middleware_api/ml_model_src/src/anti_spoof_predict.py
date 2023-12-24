@@ -1,4 +1,3 @@
-
 import os
 import cv2
 import math
@@ -7,10 +6,9 @@ import traceback
 import numpy as np
 import torch.nn.functional as F
 
-
-from src.model_lib.MiniFASNet import MiniFASNetV1, MiniFASNetV2,MiniFASNetV1SE,MiniFASNetV2SE
-from src.data_io import transform as trans
-from src.utility import get_kernel, parse_model_name
+from middleware_api.ml_model_src.src.model_lib.MiniFASNet import MiniFASNetV1, MiniFASNetV2,MiniFASNetV1SE,MiniFASNetV2SE
+from middleware_api.ml_model_src.src.data_io import transform as trans
+from middleware_api.ml_model_src.src.utility import get_kernel, parse_model_name
 
 MODEL_MAPPING = {
     'MiniFASNetV1': MiniFASNetV1,

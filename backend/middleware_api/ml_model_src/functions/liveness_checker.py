@@ -1,19 +1,15 @@
-
 import os
 import numpy as np
 import warnings
 import time
 
-from src.anti_spoof_predict import AntiSpoofPredict
-from src.generate_patches import CropImage
-from src.utility import parse_model_name
+from middleware_api.ml_model_src.src.anti_spoof_predict import AntiSpoofPredict
+from middleware_api.ml_model_src.src.generate_patches import CropImage
+from middleware_api.ml_model_src.src.utility import parse_model_name
+
 warnings.filterwarnings('ignore')
 
-
 # SAMPLE_IMAGE_PATH = "./images/sample/"
-
-
-
 
 
 def test(image, model_dir, device_id:int)->(int,float):

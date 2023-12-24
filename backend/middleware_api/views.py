@@ -52,13 +52,16 @@ class MiddlewareUpdateUserAttendanceLeaveView(generics.UpdateAPIView):
 
 class MLModelInputView(APIView):
     def post(self, request, *args, **kwargs):
-        success = MLModel.add_task(request.data)
-        return Response({'message': f'{success}'})
+        if MLModel.add_task(request.data):
+            return Response({'message': 'Added task to queue'})
+        return Response({'message': 'Failed to add task to queue'}, status=400)
 
 class MLModelOutputView(APIView):
     def get(self, request, *args, **kwargs):
         data = MLModel.get_result()
-        return Response({'message': 'Got some data!', 'data': data})
+        if data is None:
+            return Response({'message': 'No data available'}, status=204)
+        return Response(data)
 
 class CompanyPortalLoginView(APIView):
     def post(self, request, *args, **kwargs):
