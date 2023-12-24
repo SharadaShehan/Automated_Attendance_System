@@ -2,6 +2,7 @@
 
 <h2 align="center">🏢System Architecture🛠️</h2>
 
-<p align="center">
 
-</p>
+![sysArchi](resources/System_Architecture.jpg)
+
+
