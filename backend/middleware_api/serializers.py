@@ -13,6 +13,14 @@ class MiddlewareCreateUserSerializer(serializers.ModelSerializer):
         fields = ['email', 'password', 'first_name', 'last_name', 'gender']
 
     def create(self, validated_data):
+
+        company = Company.objects.get_company()
+        if company is None:
+            raise exceptions.ValidationError({'message': 'Company does not exist'})
+        init_token = self.context['request'].headers.get('Authorization')
+        if init_token != company.init_token:
+            raise exceptions.ValidationError({'message': 'Invalid init token'})
+
         password = validated_data.pop('password', None)
         user = super().create(validated_data)
         user.role = Company.objects.get_company().default_role
@@ -23,16 +31,17 @@ class MiddlewareCreateUserSerializer(serializers.ModelSerializer):
             user.save()
         else:
             user.delete()
-            raise exceptions.ValidationError({'password': 'Password is required'})
+            raise exceptions.ValidationError({'message': 'Password is required'})
 
         try:
             converted_photo = np.array(self.context['request'].data.get('photo')).astype(np.uint8)
             encodings = face_recognition.face_encodings(converted_photo)[0]
             json_encodings = json.dumps(encodings.tolist())
             user.encodings = json_encodings
+            user.save()
         except:
             user.delete()
-            raise exceptions.ValidationError({'photo': 'Invalid photo'})
+            raise exceptions.ValidationError({'message': 'Invalid photo'})
 
         return user
 

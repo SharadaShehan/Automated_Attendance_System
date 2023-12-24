@@ -164,7 +164,7 @@ class RegisterUserPage(tk.Frame):
         response = requests.post(URL, json=data, headers=headers)
 
         if response.status_code != 201:
-            self.show_error_message("Error registering user!")
+            self.show_error_message(f"Error registering user :{response.json()['message']}")
             return
 
         self.show_error_message("User registered successfully!")

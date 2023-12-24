@@ -270,5 +270,6 @@ class OnBoardingPage(tk.Frame):
         JSONConfig.update_company_name(company_name)
         JSONConfig.update_init_token(init_token)
 
+        self.show_error_message("Company registered successfully!")
         # Example: Change to the next page in the notebook
         self.controller.notebook.select(1)
