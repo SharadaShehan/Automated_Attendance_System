@@ -27,10 +27,10 @@ class LoginPage(tk.Frame):
         button = ttk.Button(self, text="login", command=self.app_login, style='Custom.TButton')
         button.pack(pady=10)
 
-        if not ConfigRead.check_config_initialized():
-            self.controller.notebook.select(5)
-        elif not ConfigRead.check_company_initialized():
-            self.controller.notebook.select(0)
+        # if not ConfigRead.check_config_initialized():
+        #     self.controller.notebook.select(5)
+        # elif not ConfigRead.check_company_initialized():
+        #     self.controller.notebook.select(0)
 
     def validate_username(self, username):
         # Add email validation regex here
@@ -73,7 +73,12 @@ class LoginPage(tk.Frame):
         headers = {
             "Authorization": init_token
         }
-        response = requests.post(URL, json=data, headers=headers)
+
+        try:
+            response = requests.post(URL, json=data, headers=headers)
+        except requests.exceptions.ConnectionError:
+            self.show_error_message("Connection Error.")
+            return
 
         if response.status_code == 200:
             access_token = response.json()["access_token"]

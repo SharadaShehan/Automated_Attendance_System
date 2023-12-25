@@ -29,7 +29,7 @@ def create_config(registration_camera, enter_camera, exit_camera):
 def check_config_initialized():
     config = configparser.ConfigParser()
     config.read('config.ini')
-    if set(config.sections()) == {'BACKEND', 'CAPTURE', 'CAMERAS', 'MQTT'}:
+    if set(config.sections()) == {'BACKEND', 'CAPTURE', 'CAMERAS', 'MQTT'} or set(config.sections()) == {'BACKEND', 'CAPTURE', 'CAMERAS', 'MQTT', 'COMPANY'}:
         if set(config['BACKEND'].keys()) == {'base_url'} and config['BACKEND']['base_url'] and \
            set(config['CAPTURE'].keys()) == {'frame_width', 'frame_height'} and config['CAPTURE']['frame_width'] and config['CAPTURE']['frame_height'] and \
            set(config['CAMERAS'].keys()) == {'registration_camera', 'enter_camera', 'exit_camera'} and config['CAMERAS']['registration_camera'] and config['CAMERAS']['enter_camera'] and config['CAMERAS']['exit_camera'] and \

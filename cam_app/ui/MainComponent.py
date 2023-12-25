@@ -40,10 +40,12 @@ class UIApp(tk.Tk):
         self.notebook.add(self.registerUserPage, text="Register User")
         self.notebook.add(self.cameraSettingsPage, text="Camera Settings")
 
-        if not ConfigRead.check_config_initialized():
-            self.notebook.select(5)
-        elif not ConfigRead.check_company_initialized():
-            self.notebook.select(0)
-        else:
-            self.notebook.select(1)
+        # if not ConfigRead.check_config_initialized():
+        #     self.notebook.select(5)
+        # elif not ConfigRead.check_company_initialized():
+        #     self.notebook.select(0)
+        # else:
+        #     self.notebook.select(1)
+
+        self.notebook.select(3)
 

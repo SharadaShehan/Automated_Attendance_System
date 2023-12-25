@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-import re, cv2, json, requests
+import re, cv2, requests
 from PIL import Image, ImageTk
 from functions import ConfigRead, Tokens
 
@@ -114,10 +114,10 @@ class OnBoardingPage(tk.Frame):
         button = ttk.Button(self.bottom_bottom_frame, text="Register", style='Custom.TButton', command=self.register_company)
         button.pack(side=tk.LEFT, padx=(0, 10))
 
-        if not ConfigRead.check_config_initialized():
-            self.controller.notebook.select(5)
-        elif ConfigRead.check_company_initialized():
-            self.controller.notebook.select(1)
+        # if not ConfigRead.check_config_initialized():
+        #     self.controller.notebook.select(5)
+        # elif ConfigRead.check_company_initialized():
+        #     self.controller.notebook.select(1)
 
     def validate_email(self, email):
         # Add email validation regex here
@@ -263,7 +263,12 @@ class OnBoardingPage(tk.Frame):
                 "photo": self.photo.tolist()
             }
         }
-        response = requests.post(URL, json=data)
+
+        try:
+            response = requests.post(URL, json=data)
+        except requests.exceptions.ConnectionError:
+            self.show_error_message("Error connecting to the server!")
+            return
 
         # Check the response status code
         if response.status_code != 201:

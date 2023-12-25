@@ -3,6 +3,15 @@ from tkinter import ttk
 import cv2, requests
 from functions import ConfigRead
 from functions import JSONConfig
+from threading import Thread
+
+
+# class MyThread(Thread):
+#     def __init__(self, thread_id, label):
+#         super().__init__()
+#         self.thread_id = thread_id
+#         self.label = label
+#         self.running = True
 
 class RunPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -10,12 +19,96 @@ class RunPage(tk.Frame):
         self.controller = controller
         # self.start_entrance_camera()
         # self.list_camera_devices()
+        self.entrance_thread_state = tk.BooleanVar()
+        self.entrance_thread_state.set(False)
+        self.exit_thread_state = tk.BooleanVar()
+        self.exit_thread_state.set(False)
+        self.speech_thread_state = tk.BooleanVar()
+        self.speech_thread_state.set(False)
 
-        label = tk.Label(self, text="App is running...", font=("Helvetica", 16))
-        label.pack(pady=10, padx=10)
+        self.top_frame = tk.Frame(self)
+        self.top_frame.pack(side=tk.TOP, expand=True)
 
-        button = ttk.Button(self, text="Exit", style='Custom.TButton', command=lambda: controller.notebook.select(1))
+        self.middle_frame = tk.Frame(self)
+        self.middle_frame.pack(side=tk.TOP, expand=True)
+
+        # entrance camera
+
+        self.middle_entrance_frame = tk.Frame(self.middle_frame)
+        self.middle_entrance_frame.pack(side=tk.TOP, expand=True)
+
+        self.entrance_title_label = tk.Label(self.middle_entrance_frame, text="Entrance Camera", font=("Helvetica", 12))
+        self.entrance_title_label.pack(padx=10, pady=10, side=tk.LEFT)
+
+        self.entrance_state_label = tk.Label(self.middle_entrance_frame, text="Stopped", font=("Helvetica", 12))
+        self.entrance_state_label.pack(padx=10, pady=10, side=tk.LEFT)
+
+        self.entrance_button = ttk.Button(self.middle_entrance_frame, text="Start", command=self.toggle_entrance_thread)
+        self.entrance_button.pack(padx=10, pady=10, side=tk.LEFT)
+
+        # exit camera
+
+        self.middle_exit_frame = tk.Frame(self.middle_frame)
+        self.middle_exit_frame.pack(side=tk.TOP, expand=True)
+
+        self.exit_title_label = tk.Label(self.middle_exit_frame, text="Exit Camera", font=("Helvetica", 12))
+        self.exit_title_label.pack(padx=10, pady=10, side=tk.LEFT)
+
+        self.exit_state_label = tk.Label(self.middle_exit_frame, text="Stopped", font=("Helvetica", 12))
+        self.exit_state_label.pack(padx=10, pady=10, side=tk.LEFT)
+
+        self.exit_button = ttk.Button(self.middle_exit_frame, text="Start", command=self.toggle_exit_thread)
+        self.exit_button.pack(padx=10, pady=10, side=tk.LEFT)
+
+        # speech
+
+        self.middle_speech_frame = tk.Frame(self.middle_frame)
+        self.middle_speech_frame.pack(side=tk.TOP, expand=True)
+
+        self.speech_title_label = tk.Label(self.middle_speech_frame, text="Speech", font=("Helvetica", 12))
+        self.speech_title_label.pack(padx=10, pady=10, side=tk.LEFT)
+
+        self.speech_state_label = tk.Label(self.middle_speech_frame, text="Stopped", font=("Helvetica", 12))
+        self.speech_state_label.pack(padx=10, pady=10, side=tk.LEFT)
+
+        self.speech_button = ttk.Button(self.middle_speech_frame, text="Start", command=self.toggle_speech_thread)
+        self.speech_button.pack(padx=10, pady=10, side=tk.LEFT)
+
+        self.bottom_frame = tk.Frame(self)
+        self.bottom_frame.pack(side=tk.TOP, expand=True)
+
+        button = ttk.Button(self.bottom_frame, text="Exit", style='Custom.TButton', command=lambda: controller.notebook.select(2))
         button.pack(pady=10)
+
+    def toggle_entrance_thread(self):
+        if self.entrance_thread_state.get():
+            self.entrance_thread_state.set(False)
+            self.entrance_state_label.config(text="Stopped")
+            self.entrance_button.config(text="Start")
+        else:
+            self.entrance_thread_state.set(True)
+            self.entrance_state_label.config(text="Running")
+            self.entrance_button.config(text="Stop")
+
+    def toggle_exit_thread(self):
+        if self.exit_thread_state.get():
+            self.exit_thread_state.set(False)
+            self.exit_state_label.config(text="Stopped")
+            self.exit_button.config(text="Start")
+        else:
+            self.exit_thread_state.set(True)
+            self.exit_state_label.config(text="Running")
+            self.exit_button.config(text="Stop")
+
+    def toggle_speech_thread(self):
+        if self.speech_thread_state.get():
+            self.speech_thread_state.set(False)
+            self.speech_state_label.config(text="Stopped")
+            self.speech_button.config(text="Start")
+        else:
+            self.speech_thread_state.set(True)
+            self.speech_state_label.config(text="Running")
+            self.speech_button.config(text="Stop")
 
     def show_error_message(self, message):
         error_message = tk.Toplevel(self)
@@ -50,7 +143,12 @@ class RunPage(tk.Frame):
                     'entrance': 1
                 }
 
-                response = requests.post(URL, json=data, headers=headers)
+                try:
+                    response = requests.post(URL, json=data, headers=headers)
+                except requests.exceptions.ConnectionError:
+                    self.show_error_message("Connection Error")
+                    break
+
                 if response.status_code != 200:
                     # self.show_error_message(response.json()['message'])
                     print(response.json())
@@ -65,24 +163,3 @@ class RunPage(tk.Frame):
         cap.release()
         # cv2.destroyAllWindows()
 
-    def list_camera_devices(self):
-            # Get the list of camera devices
-        camera_list = []
-        for i in range(10):  # You can adjust the range based on the number of devices you expect
-            cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
-            if not cap.isOpened():
-                break
-            else:
-                camera_list.append(f"Camera {i}")
-                width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                cap.release()
-
-        if camera_list:
-            print("Available camera devices:")
-            for camera in camera_list:
-                print(camera)
-        else:
-            print("No camera devices found.")
-
-        self.controller.notebook.select(2)

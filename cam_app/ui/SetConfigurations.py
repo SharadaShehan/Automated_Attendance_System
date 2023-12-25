@@ -93,10 +93,10 @@ class CameraSettingsPage(tk.Frame):
         self.sample_snap = ttk.Label(self.frame_bottom_right)
         self.sample_snap.pack(pady=10, padx=10)
 
-        if ConfigRead.check_company_initialized():
-            self.controller.notebook.select(1)
-        elif ConfigRead.check_config_initialized():
-            self.controller.notebook.select(0)
+        # if ConfigRead.check_company_initialized():
+        #     self.controller.notebook.select(1)
+        # elif ConfigRead.check_config_initialized():
+        #     self.controller.notebook.select(0)
 
 
     def show_error_message(self, message):

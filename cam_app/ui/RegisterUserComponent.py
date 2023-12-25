@@ -63,10 +63,10 @@ class RegisterUserPage(tk.Frame):
         button = ttk.Button(self.bottom_frame, text="Register", style='Custom.TButton', command=self.register_user)
         button.pack(side=tk.LEFT, padx=(5, 5))
 
-        if not ConfigRead.check_config_initialized():
-            self.controller.notebook.select(5)
-        elif not ConfigRead.check_company_initialized():
-            self.controller.notebook.select(0)
+        # if not ConfigRead.check_config_initialized():
+        #     self.controller.notebook.select(5)
+        # elif not ConfigRead.check_company_initialized():
+        #     self.controller.notebook.select(0)
 
     def validate_email(self, email):
         # Add email validation regex here
@@ -169,7 +169,12 @@ class RegisterUserPage(tk.Frame):
         headers = {
             "Authorization": init_token
         }
-        response = requests.post(URL, json=data, headers=headers)
+
+        try:
+            response = requests.post(URL, json=data, headers=headers)
+        except requests.exceptions.ConnectionError:
+            self.show_error_message("Error connecting to server!")
+            return
 
         if response.status_code != 201:
             self.show_error_message(f"Error registering user :{response.json()['message']}")

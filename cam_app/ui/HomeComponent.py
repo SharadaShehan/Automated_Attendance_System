@@ -17,7 +17,7 @@ class HomePage(tk.Frame):
         button = ttk.Button(self, text="Register User", style='Custom.TButton', command=lambda: controller.notebook.select(4))
         button.pack(pady=10)
 
-        if not ConfigRead.check_config_initialized():
-            self.controller.notebook.select(5)
-        elif not ConfigRead.check_company_initialized():
-            self.controller.notebook.select(0)
+        # if not ConfigRead.check_config_initialized():
+        #     self.controller.notebook.select(5)
+        # elif not ConfigRead.check_company_initialized():
+        #     self.controller.notebook.select(0)
