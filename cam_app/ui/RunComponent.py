@@ -1,13 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
 import cv2, requests
+from functions import ConfigRead
 from functions import JSONConfig
 
 class RunPage(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-        self.start_entrance_camera()
+        # self.start_entrance_camera()
+        # self.list_camera_devices()
 
         label = tk.Label(self, text="App is running...", font=("Helvetica", 16))
         label.pack(pady=10, padx=10)
@@ -26,7 +28,7 @@ class RunPage(tk.Frame):
     def start_entrance_camera(self, camera_index=0):
         cap = cv2.VideoCapture(camera_index)
 
-        BaseURL = JSONConfig.read_url()
+        BaseURL = ConfigRead.read_config()['base_url']
         URL = BaseURL + '/feed-snapshot'
 
         access_token = JSONConfig.read_access_token()
@@ -62,5 +64,25 @@ class RunPage(tk.Frame):
 
         cap.release()
         # cv2.destroyAllWindows()
+
+    def list_camera_devices(self):
+            # Get the list of camera devices
+        camera_list = []
+        for i in range(10):  # You can adjust the range based on the number of devices you expect
+            cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+            if not cap.isOpened():
+                break
+            else:
+                camera_list.append(f"Camera {i}")
+                width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                cap.release()
+
+        if camera_list:
+            print("Available camera devices:")
+            for camera in camera_list:
+                print(camera)
+        else:
+            print("No camera devices found.")
 
         self.controller.notebook.select(2)

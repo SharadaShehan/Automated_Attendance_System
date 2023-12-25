@@ -3,7 +3,7 @@ from tkinter import ttk
 import cv2
 from PIL import Image, ImageTk
 import re, requests
-from functions import JSONConfig
+from functions import ConfigRead, Tokens
 
 
 class RegisterUserPage(tk.Frame):
@@ -63,6 +63,11 @@ class RegisterUserPage(tk.Frame):
         button = ttk.Button(self.bottom_frame, text="Register", style='Custom.TButton', command=self.register_user)
         button.pack(side=tk.LEFT, padx=(5, 5))
 
+        if not ConfigRead.check_config_initialized():
+            self.controller.notebook.select(5)
+        elif not ConfigRead.check_company_initialized():
+            self.controller.notebook.select(0)
+
     def validate_email(self, email):
         # Add email validation regex here
         return re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email)
@@ -93,12 +98,14 @@ class RegisterUserPage(tk.Frame):
         ok_button.pack(pady=10)
 
     def snap_photo(self):
-        cap = cv2.VideoCapture(0)
+        config_dict = ConfigRead.read_config()
+        camera_index = int(config_dict['CAMERAS']['registration_camera'])
+        cap = cv2.VideoCapture(camera_index)
         ret, frame = cap.read()
         cap.release()
 
-        desired_width = 200
-        desired_height = 150
+        desired_width = int(config_dict['CAPTURE']['frame_width'])
+        desired_height = int(config_dict['CAPTURE']['frame_height'])
         scaled_down_frame = cv2.resize(frame, (desired_width, desired_height))
         color_corrected_frame = cv2.cvtColor(scaled_down_frame, cv2.COLOR_BGR2RGB)
 
@@ -146,9 +153,10 @@ class RegisterUserPage(tk.Frame):
             self.show_error_message("Invalid photo!")
             return
 
-        BaseURL = JSONConfig.read_url()
+        BaseURL = ConfigRead.read_config()['BACKEND']['base_url']
         URL = BaseURL + "/create/user"
-        init_token = JSONConfig.read_init_token()
+
+        init_token = Tokens.get_init_token()
 
         data = {
             "email": email,

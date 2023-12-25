@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 import re, requests
-from functions import JSONConfig
+from functions import ConfigRead, Tokens
+
 
 class LoginPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -25,6 +26,11 @@ class LoginPage(tk.Frame):
 
         button = ttk.Button(self, text="login", command=self.app_login, style='Custom.TButton')
         button.pack(pady=10)
+
+        if not ConfigRead.check_config_initialized():
+            self.controller.notebook.select(5)
+        elif not ConfigRead.check_company_initialized():
+            self.controller.notebook.select(0)
 
     def validate_username(self, username):
         # Add email validation regex here
@@ -55,9 +61,10 @@ class LoginPage(tk.Frame):
             self.show_error_message("Invalid password.")
             return
 
-        BaseURL = JSONConfig.read_url()
+        BaseURL = ConfigRead.read_config()['BACKEND']['base_url']
         URL = BaseURL + "/login"
-        init_token = JSONConfig.read_init_token()
+
+        init_token = Tokens.get_init_token()
 
         data = {
             "username": username,
@@ -70,7 +77,9 @@ class LoginPage(tk.Frame):
 
         if response.status_code == 200:
             access_token = response.json()["access_token"]
-            JSONConfig.update_access_token(access_token)
+            if not Tokens.save_access_token(access_token):
+                self.show_error_message("Error saving access token.")
+                return
             self.controller.notebook.select(2)
         else:
             self.show_error_message("Invalid Credentials.")

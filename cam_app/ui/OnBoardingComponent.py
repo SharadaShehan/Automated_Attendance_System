@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 import re, cv2, json, requests
 from PIL import Image, ImageTk
-from functions import JSONConfig
+from functions import ConfigRead, Tokens
+
 
 class OnBoardingPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -100,7 +101,6 @@ class OnBoardingPage(tk.Frame):
         ttk.Button(self.bottom_top_right_frame, text="Snap Photo", style='Custom.TButton', command=self.snap_photo).pack(padx=(5, 5),
                                                                                                   pady=(0, 10), side=tk.LEFT)
 
-
         label = tk.Label(self.bottom_bottom_frame, text="Already Registered ?", font=("Helvetica", 12))
         label.pack(side=tk.LEFT, padx=(40, 5))
 
@@ -113,6 +113,11 @@ class OnBoardingPage(tk.Frame):
 
         button = ttk.Button(self.bottom_bottom_frame, text="Register", style='Custom.TButton', command=self.register_company)
         button.pack(side=tk.LEFT, padx=(0, 10))
+
+        if not ConfigRead.check_config_initialized():
+            self.controller.notebook.select(5)
+        elif ConfigRead.check_company_initialized():
+            self.controller.notebook.select(1)
 
     def validate_email(self, email):
         # Add email validation regex here
@@ -144,12 +149,14 @@ class OnBoardingPage(tk.Frame):
         ok_button.pack(pady=10)
 
     def snap_photo(self):
-        cap = cv2.VideoCapture(0)
+        config_dict = ConfigRead.read_config()
+        camera_index = int(config_dict['CAMERAS']['registration_camera'])
+        cap = cv2.VideoCapture(camera_index)
         ret, frame = cap.read()
         cap.release()
 
-        desired_width = 200
-        desired_height = 150
+        desired_width = int(config_dict['CAPTURE']['frame_width'])
+        desired_height = int(config_dict['CAPTURE']['frame_height'])
         scaled_down_frame = cv2.resize(frame, (desired_width, desired_height))
         color_corrected_frame = cv2.cvtColor(scaled_down_frame, cv2.COLOR_BGR2RGB)
 
@@ -218,8 +225,6 @@ class OnBoardingPage(tk.Frame):
         username = self.username_entry.get()
         company_password = self.company_password_entry.get()
 
-        JSONConfig.create()
-
         # Validate inputs
         if not self.validate_company_name(company_name):
             self.show_error_message("""Invalid company name.
@@ -241,7 +246,7 @@ class OnBoardingPage(tk.Frame):
         if not self.check_user_validity():
             return
 
-        BaseURL = JSONConfig.read_url()
+        BaseURL = ConfigRead.read_config()['BACKEND']['base_url']
         URL = BaseURL + "/create/company"
 
         # Send the data to the server
@@ -267,8 +272,11 @@ class OnBoardingPage(tk.Frame):
         init_token = response.json()["init_token"]
 
         # Save the company name to the config file
-        JSONConfig.update_company_name(company_name)
-        JSONConfig.update_init_token(init_token)
+        ConfigRead.update_company_name(company_name)
+
+        if not Tokens.save_init_token(init_token):
+            self.show_error_message("Error saving token!")
+            return
 
         self.show_error_message("Company registered successfully!")
         # Example: Change to the next page in the notebook

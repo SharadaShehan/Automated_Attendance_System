@@ -5,7 +5,9 @@ from .LoginComponent import LoginPage
 from .OnBoardingComponent import OnBoardingPage
 from .RegisterUserComponent import RegisterUserPage
 from .RunComponent import RunPage
-from functions import JSONConfig
+from .SetConfigurations import CameraSettingsPage
+from functions import ConfigRead
+
 
 class UIApp(tk.Tk):
     def __init__(self):
@@ -28,22 +30,20 @@ class UIApp(tk.Tk):
         self.registerUserPage = RegisterUserPage(self.notebook, self)
         self.loginPage = LoginPage(self.notebook, self)
         self.homePage = HomePage(self.notebook, self)
-        self.onBoarding = OnBoardingPage(self.notebook, self)
+        self.onBoardingPage = OnBoardingPage(self.notebook, self)
+        self.cameraSettingsPage = CameraSettingsPage(self.notebook, self)
 
-        self.notebook.add(self.onBoarding, text="OnBoarding")
+        self.notebook.add(self.onBoardingPage, text="OnBoarding")
         self.notebook.add(self.loginPage, text="Login")
         self.notebook.add(self.homePage, text="Home")
         self.notebook.add(self.runAppPage, text="Run App")
         self.notebook.add(self.registerUserPage, text="Register User")
+        self.notebook.add(self.cameraSettingsPage, text="Camera Settings")
 
-        # try:
-        #     company_name = JSONConfig.read_company_name()
-        #     if company_name == None:
-        #         self.notebook.select(0)
-        #     else:
-        #         self.notebook.select(1)
-        # except:
-        #     self.notebook.select(0)
-
-        self.notebook.select(4)
+        if not ConfigRead.check_config_initialized():
+            self.notebook.select(5)
+        elif not ConfigRead.check_company_initialized():
+            self.notebook.select(0)
+        else:
+            self.notebook.select(1)
 
