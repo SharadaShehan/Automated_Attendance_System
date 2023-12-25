@@ -2,6 +2,7 @@
 __pycache__
 db.sqlite3
 /env
+/venv
 /database/migrations
 *.env
 .vscode
