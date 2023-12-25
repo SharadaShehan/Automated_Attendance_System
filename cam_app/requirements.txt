@@ -3,3 +3,4 @@ Pillow~=9.3.0
 requests~=2.26.0
 paho-mqtt~=1.6.1
 cryptography~=35.0.0
+gTTS~=2.2.3

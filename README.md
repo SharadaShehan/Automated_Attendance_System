@@ -15,6 +15,7 @@
 
 ## Backend
 Recommendations : <br>
+
 Python version : `Python 3.10.9`  <br>
 IDE : `PyCharm`
 
@@ -49,10 +50,11 @@ Note : Develop the backend in a virtual environment.
 4) Run below commands to install `dlib` and `face_recognition` libraries.
 
     ```
-    pip install "path_to_parent_directory/Automated_Attendance_System/backend/dlib-19.22.99-cp310-cp310-win_amd64.whl"
+    pip install "ROOT_PATH/Automated_Attendance_System/backend/dlib-19.22.99-cp310-cp310-win_amd64.whl"
 
     pip install face_recognition
     ```
+    Replace `ROOT_PATH` text with actual path of parent directory of Automated_Attendance_System folder.
 
 5) create `.env` file in `/backend/backend/` location with following variables in it.
 
@@ -67,7 +69,7 @@ Note : Develop the backend in a virtual environment.
     SQL_HOST=localhost
     SQL_PORT=5432
     ```
-    Replace `SQL_DATABASE`, `SQL_USER`, `SQL_PASSWORD`, `SQL_PORT`  environment variables values with relevant credentials for your local PostgreSQL database.
+    Replace `SQL_DATABASE`, `SQL_USER`, `SQL_PASSWORD`, `SQL_PORT` environment variables values with relevant credentials for your local PostgreSQL database.
 
 6) Apply Model migrations to PostgreSQL database.
 
