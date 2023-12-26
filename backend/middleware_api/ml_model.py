@@ -6,6 +6,7 @@ import numpy as np
 import datetime, os, json
 import paho.mqtt.client as paho
 
+
 class MLModel:
     pending_tasks = queue.Queue(maxsize=20)
     mqtt_client = paho.Client()

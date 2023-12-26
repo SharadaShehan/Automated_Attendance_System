@@ -1,4 +1,4 @@
-from ui.MainComponent import UIApp
+from components.MainComponent import UIApp
 
 
 if __name__ == "__main__":

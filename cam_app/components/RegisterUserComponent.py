@@ -57,7 +57,7 @@ class RegisterUserPage(tk.Frame):
         self.bottom_frame = tk.Frame(self)
         self.bottom_frame.pack(padx=(5, 5), pady=(10, 10))
 
-        button = ttk.Button(self.bottom_frame, text="Cancel", style='Custom.TButton', command=lambda: controller.notebook.select(1))
+        button = ttk.Button(self.bottom_frame, text="Cancel", style='Custom.TButton', command=lambda: controller.notebook.select(2))
         button.pack(side=tk.LEFT, padx=(5, 5))
 
         button = ttk.Button(self.bottom_frame, text="Register", style='Custom.TButton', command=self.register_user)

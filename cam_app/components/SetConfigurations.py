@@ -14,6 +14,7 @@ class CameraSettingsPage(tk.Frame):
         self.registration_camera = None
         self.enter_camera = None
         self.exit_camera = None
+        self.config_dict = ConfigRead.read_config()
 
         for i in range(10):  # You can adjust the range based on the number of devices you expect
             cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
@@ -98,7 +99,6 @@ class CameraSettingsPage(tk.Frame):
         # elif ConfigRead.check_config_initialized():
         #     self.controller.notebook.select(0)
 
-
     def show_error_message(self, message):
         error_message = tk.Toplevel(self)
         error_message.title("Error")
@@ -112,8 +112,9 @@ class CameraSettingsPage(tk.Frame):
         ret, frame = cap.read()
         cap.release()
 
-        desired_width = 200
-        desired_height = 150
+        desired_width = int(self.config_dict['CAPTURE']['frame_width'])
+        desired_height = int(self.config_dict['CAPTURE']['frame_height'])
+
         scaled_down_frame = cv2.resize(frame, (desired_width, desired_height))
         color_corrected_frame = cv2.cvtColor(scaled_down_frame, cv2.COLOR_BGR2RGB)
         # Convert the OpenCV frame to a format compatible with Tkinter
@@ -144,11 +145,16 @@ class CameraSettingsPage(tk.Frame):
         enter_camera_index = int(enter_camera.split()[1])
         exit_camera_index = int(exit_camera.split()[1])
 
-        status = ConfigRead.create_config(registration_camera_index, enter_camera_index, exit_camera_index)
-        if status:
-            if ConfigRead.check_company_initialized():
-                self.controller.notebook.select(1)
+        if ConfigRead.check_company_initialized():
+            status = ConfigRead.update_camera_config(registration_camera_index, enter_camera_index, exit_camera_index)
+            if status:
+                self.controller.notebook.select(2)
             else:
-                self.controller.notebook.select(0)
+                self.show_error_message("Error saving configurations. Please try again.")
         else:
-            self.show_error_message("Error saving configurations. Please try again.")
+            status = ConfigRead.create_config(registration_camera_index, enter_camera_index, exit_camera_index)
+            if status:
+                self.controller.notebook.select(0)
+            else:
+                self.show_error_message("Error saving configurations. Please try again.")
+

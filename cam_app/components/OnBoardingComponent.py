@@ -284,5 +284,5 @@ class OnBoardingPage(tk.Frame):
             return
 
         self.show_error_message("Company registered successfully!")
-        # Example: Change to the next page in the notebook
+
         self.controller.notebook.select(1)

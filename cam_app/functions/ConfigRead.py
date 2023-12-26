@@ -1,7 +1,9 @@
 import configparser
-
+import os, re
+from dotenv import load_dotenv
 
 def create_config(registration_camera, enter_camera, exit_camera):
+    load_dotenv()
     config = configparser.ConfigParser()
     config['CAMERAS'] = {
         'registration_camera': int(registration_camera),
@@ -9,16 +11,16 @@ def create_config(registration_camera, enter_camera, exit_camera):
         'exit_camera': int(exit_camera)
     }
     config['CAPTURE'] = {
-        'frame_width': 200,
-        'frame_height': 150
+        'frame_width': int(os.getenv('FRAME_WIDTH')),
+        'frame_height': int(os.getenv('FRAME_HEIGHT'))
     }
     config['BACKEND'] = {
-        'base_url': 'http://127.0.0.1:8000/middleware',
+        'base_url': os.getenv('BACKEND_BASE_URL')
     }
     config['MQTT'] = {
-        'broker': 'localhost',
-        'port': 1883,
-        'topic': 'attendance'
+        'broker': os.getenv('MQTT_BROKER_URL'),
+        'port': int(os.getenv('MQTT_BROKER_PORT')),
+        'topic': os.getenv('MQTT_TOPIC')
     }
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
@@ -52,6 +54,30 @@ def update_company_name(company_name):
 
     with open('config.ini', "w") as configfile:
         configfile.write(existing_data)
+
+    return True
+
+
+def update_camera_config(registration_camera, enter_camera, exit_camera):
+    existing_data = {}
+    try:
+        with open('config.ini', "r") as configfile:
+            existing_data = configfile.read()
+    except FileNotFoundError:
+        print(f"File 'config.ini' not found.")
+        return False
+
+    # Define the pattern to match the camera configuration lines
+    pattern = r"\[CAMERAS\].*?registration_camera = .*?\n.*?enter_camera = .*?\n.*?exit_camera = .*?\n"
+
+    # Create the new camera configuration data
+    new_data = f"[CAMERAS]\nregistration_camera = {registration_camera}\nenter_camera = {enter_camera}\nexit_camera = {exit_camera}\n"
+
+    # Replace the existing camera configuration data with the new data
+    updated_data = re.sub(pattern, new_data, existing_data, flags=re.DOTALL)
+
+    with open('config.ini', "w") as configfile:
+        configfile.write(updated_data)
 
     return True
 
