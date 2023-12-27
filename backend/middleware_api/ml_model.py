@@ -5,6 +5,10 @@ import face_recognition
 import numpy as np
 import datetime, os, json
 import paho.mqtt.client as paho
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 
 class MLModel:
@@ -14,9 +18,13 @@ class MLModel:
 
     @classmethod
     def start_ml_model(cls):
+        mqtt_broker = env('MQTT_BROKER')
+        mqtt_port = int(env('MQTT_PORT'))
+        mqtt_topic = env('MQTT_TOPIC')
+        min_minutes_threshold = int(env('MIN_MINUTES_THRESHOLD'))   # Minimum minutes between two entrances or two leaves for same user
 
         # Start the mqtt client and connect to the broker
-        if cls.mqtt_client.connect('localhost', 1883) != 0:
+        if cls.mqtt_client.connect(mqtt_broker, mqtt_port) != 0:
             raise Exception('Failed to connect to mqtt broker')
 
         current_directory = os.path.dirname(__file__)
@@ -78,15 +86,16 @@ class MLModel:
 
 
                         time_format = '%H-%M'   # expected format of time
-                        min_minutes_threshold = 1   # Minimum minutes between two entrances or two leaves
                         if entrance == 1:
                             entrance_list_of_day = attendance_obj[date_strings_list[0]][date_strings_list[1]][date_strings_list[2]]['entrance']
                             if len(entrance_list_of_day) > 0:
                                 last_entrance = datetime.datetime.strptime(entrance_list_of_day[-1], time_format)
                                 current_entrance = datetime.datetime.strptime(time, time_format)
+                                print(current_entrance, last_entrance, current_entrance - last_entrance, datetime.timedelta(minutes=min_minutes_threshold))
                                 # Check if the time difference between the last entrance and the current entrance is less than the minimum minutes threshold
                                 if current_entrance - last_entrance < datetime.timedelta(minutes=min_minutes_threshold):
                                     continue
+                                print("++++++++++++++++++++++++++++++++++++++++++++++")
                             attendance_obj[date_strings_list[0]][date_strings_list[1]][date_strings_list[2]]['entrance'].append(time)
                         elif entrance == 0:
                             leave_list_of_day = attendance_obj[date_strings_list[0]][date_strings_list[1]][date_strings_list[2]]['leave']
@@ -107,7 +116,7 @@ class MLModel:
                         signature = 'Mr.' if detected_user.gender == 'Male' else 'Ms.'
                         user_name = detected_user.first_name + ' ' + detected_user.last_name
                         greeting = greeting + ' ' + signature + ' ' + user_name
-                        cls.mqtt_client.publish('attendance', greeting)
+                        cls.mqtt_client.publish(mqtt_topic, greeting)
 
         # close the MQTT client
         cls.mqtt_client.disconnect()
@@ -118,12 +127,6 @@ class MLModel:
             cls.pending_tasks.put(input_data)
             return True
         return False
-
-    # @classmethod
-    # def get_result(cls):
-    #     if not cls.finished_tasks.empty():
-    #         return cls.finished_tasks.get()
-    #     return None
 
     @classmethod
     def add_user_encodings(cls, user_data):

@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'api',
     'middleware_api',
     'apscheduler',
-    'corsheaders'
+    'corsheaders',
+    'scripts',
 ]
 
 MIDDLEWARE = [

@@ -2,14 +2,16 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from database.models import CustomUser, Company
-from .serializers import MiddlewareCreateUserSerializer, MiddlewareCreateCompanySerializer, MiddlewareUpdateUserAttendanceEnterSerializer, MiddlewareUpdateUserAttendanceLeaveSerializer
+from .serializers import MiddlewareCreateUserSerializer, MiddlewareCreateCompanySerializer
 from .ml_model import MLModel
 from werkzeug.security import check_password_hash
 import secrets
 
+
 class MiddlewareCreateUserView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = MiddlewareCreateUserSerializer
+
 
 class MiddlewareCreateCompanyView(generics.CreateAPIView):
     queryset = Company.objects.all()
@@ -42,13 +44,6 @@ class MiddlewareCreateCompanyView(generics.CreateAPIView):
         random_string = secrets.token_hex(length // 2)
         return random_string[:length]
 
-class MiddlewareUpdateUserAttendanceEnterView(generics.UpdateAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = MiddlewareUpdateUserAttendanceEnterSerializer
-
-class MiddlewareUpdateUserAttendanceLeaveView(generics.UpdateAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = MiddlewareUpdateUserAttendanceLeaveSerializer
 
 class MLModelInputView(APIView):
     def post(self, request, *args, **kwargs):
@@ -61,12 +56,6 @@ class MLModelInputView(APIView):
             return Response({'message': 'Task added to queue'})
         return Response({'message': 'Failed to add task to queue'}, status=400)
 
-# class MLModelOutputView(APIView):
-#     def get(self, request, *args, **kwargs):
-#         data = MLModel.get_result()
-#         if data is None:
-#             return Response({'message': 'No data available'}, status=204)
-#         return Response(data)
 
 class CompanyPortalLoginView(APIView):
     def post(self, request, *args, **kwargs):
