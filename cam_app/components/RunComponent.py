@@ -153,7 +153,7 @@ class SpeechThread(Thread):
         self.parent.speech_thread_state.set(False)
 
     def on_message(self, client, userdata, msg):
-        # print(msg.topic+" "+str(msg.payload))
+        print(msg.topic+" "+msg.payload.decode("utf-8"))
         text_to_speak = msg.payload.decode("utf-8")
         self.engine.say(text_to_speak)
         self.engine.runAndWait()

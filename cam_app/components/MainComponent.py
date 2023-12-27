@@ -23,7 +23,7 @@ class UIApp(tk.Tk):
         style.configure('Custom.TButton', font=('Helvetica', 12))  # Set the font size here
 
         self.notebook = ttk.Notebook(self)
-        self.notebook.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+        self.notebook.pack(fill=tk.BOTH, expand=True)
         # self.notebook.configure(width=int(self.width * 0.8), height=int(self.height * 0.8))
 
         self.runAppPage = RunPage(self.notebook, self)
@@ -46,5 +46,3 @@ class UIApp(tk.Tk):
             self.notebook.select(0)
         else:
             self.notebook.select(1)
-
-        # self.notebook.select(3)

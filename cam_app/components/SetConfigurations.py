@@ -17,17 +17,17 @@ class CameraSettingsPage(tk.Frame):
         self.config_dict = ConfigRead.read_config()
 
         for i in range(10):  # You can adjust the range based on the number of devices you expect
-            cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
-            if not cap.isOpened():
+            self.cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+            if not self.cap.isOpened():
                 break
             else:
                 self.camera_list.append(
                     {
                         'index': i,
-                        'text': f"Camera {i} - {int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))} x {int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))}"
+                        'text': f"Camera {i} - {int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))} x {int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))}"
                     }
                 )
-                cap.release()
+                self.cap.release()
 
         label = tk.Label(self, text="Camera Configuration", font=("Helvetica", 16))
         label.pack(pady=10, padx=10)
@@ -75,7 +75,7 @@ class CameraSettingsPage(tk.Frame):
         button.pack(pady=10, padx=10, side=tk.LEFT)
 
         self.frame_bottom = tk.Frame(self)
-        self.frame_bottom.pack(side=tk.BOTTOM, pady=5, padx=10)
+        self.frame_bottom.pack(side=tk.TOP, pady=5, padx=10)
 
         self.frame_bottom_left = tk.Frame(self.frame_bottom)
         self.frame_bottom_left.pack(side=tk.LEFT, pady=0, padx=10)
@@ -88,7 +88,7 @@ class CameraSettingsPage(tk.Frame):
             self.mini_frame.pack(pady=2, padx=10)
             label = tk.Label(self.mini_frame, text=camera['text'], font=("Helvetica", 10))
             label.pack(pady=0, padx=10, side=tk.LEFT)
-            snap_button = ttk.Button(self.mini_frame, text="Test", command=lambda: self.snap_camera(camera['index']))
+            snap_button = ttk.Button(self.mini_frame, text="Test", command=lambda cam_index=camera['index']: self.snap_camera(cam_index))
             snap_button.pack(pady=0, padx=10, side=tk.LEFT)
 
         self.sample_snap = ttk.Label(self.frame_bottom_right)
@@ -108,9 +108,9 @@ class CameraSettingsPage(tk.Frame):
         ok_button.pack(pady=10)
 
     def snap_camera(self, camera_index=0):
-        cap = cv2.VideoCapture(camera_index)
-        ret, frame = cap.read()
-        cap.release()
+        self.cap = cv2.VideoCapture(camera_index)
+        ret, frame = self.cap.read()
+        self.cap.release()
 
         desired_width = int(self.config_dict['CAPTURE']['frame_width'])
         desired_height = int(self.config_dict['CAPTURE']['frame_height'])
