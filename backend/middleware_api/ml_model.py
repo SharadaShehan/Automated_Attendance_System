@@ -90,18 +90,16 @@ class MLModel:
                             entrance_list_of_day = attendance_obj[date_strings_list[0]][date_strings_list[1]][date_strings_list[2]]['entrance']
                             if len(entrance_list_of_day) > 0:
                                 last_entrance = datetime.datetime.strptime(entrance_list_of_day[-1], time_format)
-                                current_entrance = datetime.datetime.strptime(time, time_format)
-                                print(current_entrance, last_entrance, current_entrance - last_entrance, datetime.timedelta(minutes=min_minutes_threshold))
+                                current_entrance = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%m-%d %H-%M").split()[1], time_format)
                                 # Check if the time difference between the last entrance and the current entrance is less than the minimum minutes threshold
                                 if current_entrance - last_entrance < datetime.timedelta(minutes=min_minutes_threshold):
                                     continue
-                                print("++++++++++++++++++++++++++++++++++++++++++++++")
                             attendance_obj[date_strings_list[0]][date_strings_list[1]][date_strings_list[2]]['entrance'].append(time)
                         elif entrance == 0:
                             leave_list_of_day = attendance_obj[date_strings_list[0]][date_strings_list[1]][date_strings_list[2]]['leave']
                             if len(leave_list_of_day) > 0:
                                 last_leave = datetime.datetime.strptime(leave_list_of_day[-1], time_format)
-                                current_leave = datetime.datetime.strptime(time, time_format)
+                                current_leave = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%m-%d %H-%M").split()[1], time_format)
                                 # Check if the time difference between the last leave and the current leave is less than the minimum minutes threshold
                                 if current_leave - last_leave < datetime.timedelta(minutes=min_minutes_threshold):
                                     continue
