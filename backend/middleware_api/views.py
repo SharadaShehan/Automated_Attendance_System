@@ -47,14 +47,16 @@ class MiddlewareCreateCompanyView(generics.CreateAPIView):
 
 class MLModelInputView(APIView):
     def post(self, request, *args, **kwargs):
-        access_token = request.headers.get('Authorization', None)
-        if access_token is None:
-            return Response({'message': 'Access token is required'}, status=401)
-        elif access_token != Company.objects.get_company().access_token:
-            return Response({'message': 'Invalid access token'}, status=401)
-        if MLModel.add_task(request.data):
-            return Response({'message': 'Task added to queue'})
-        return Response({'message': 'Failed to add task to queue'}, status=400)
+        try:
+            company = Company.objects.get_company()
+            if company.access_token == request.headers.get('Authorization', None):
+                if MLModel.add_input(request.data):
+                    return Response({'message': 'Input added to queue'})
+                return Response({'message': 'Failed to add input to queue'}, status=400)
+            else:
+                return Response({'message': 'Invalid access token'}, status=401)
+        except Company.DoesNotExist:
+            return Response({'message': 'Company does not exist'}, status=400)
 
 
 class CompanyPortalLoginView(APIView):
@@ -79,3 +81,4 @@ class CompanyPortalLoginView(APIView):
         # Generate a random string with the specified length
         random_string = secrets.token_hex(length // 2)
         return random_string[:length]
+

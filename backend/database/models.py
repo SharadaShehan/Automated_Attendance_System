@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
 class Role(models.Model):
-    name = models.CharField(max_length=30, unique=False, null=False, blank=False)
+    name = models.CharField(max_length=30, unique=True, null=False, blank=False)
     is_manager = models.BooleanField(default=False)
     is_executive = models.BooleanField(default=False)
 

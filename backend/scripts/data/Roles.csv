@@ -1,0 +1,9 @@
+name, is_manager, is_executive
+Employee, 0, 0
+CEO, 1, 1
+CTO, 1, 0
+Project Manager, 1, 0
+Marketing Manager, 1, 0
+AI Engineer, 0, 0
+DevOps Engineer, 0, 0
+Cybersecurity Engineer, 0, 0
