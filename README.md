@@ -9,17 +9,25 @@
 
 * First, clone the repository. 
     
-    ```bash
+    ```
     git clone https://github.com/SharadaShehan/Automated_Attendance_System.git
     ```
 
+### Requirements
+
+* Following applications must be installed and running on your local machine, before starting project.
+
+    ```
+    PostgreSQL database server
+    Mosquitto MQTT Broker
+    ```
+
 ## Backend
-Recommendations : <br>
 
-Python version : `Python 3.10.9`  <br>
-IDE : `PyCharm`
+* Python version 3.10.9 is recommended.
+* Run Backend in a virtual environment.
 
-Note : Develop the backend in a virtual environment.
+<br>
 
 1) Navigate to the backend repository.
 
@@ -75,8 +83,8 @@ Note : Develop the backend in a virtual environment.
     ```
     Replace `SQL_DATABASE`, `SQL_USER`, `SQL_PASSWORD`, `SQL_PORT` environment variables values with relevant credentials for your local PostgreSQL database and `MQTT_BROKER`, `MQTT_PORT`, `MQTT_TOPIC` environment variables values with relevant credentials for your local mosquitto broker.
     `MIN_MINUTES_THRESHOLD` is the minimum duration between two detections from same user to consider second detection as an attendance.
- 
-6) Apply Model migrations to PostgreSQL database.
+
+6) In terminal move to location `Automated_Attendance_System/backend/` and Apply Model migrations to PostgreSQL database using following commands.
 
     ```
     python manage.py makemigrations
@@ -103,3 +111,6 @@ Node : Following steps must be taken, only when developing frontend application.
     python manage.py migrate database zero
     python manage.py migrate
     ```
+
+## Cam Stream App
+
