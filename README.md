@@ -12,6 +12,9 @@
     ```
     git clone https://github.com/SharadaShehan/Automated_Attendance_System.git
     ```
+* Python version 3.10.9 is recommended.
+* Run Backend and Cam Stream App in a virtual environment.
+* PyCharm IDE is recommended for initializing project.
 
 #### Requirements
 
@@ -24,22 +27,20 @@
 
 ## Backend
 
-* Python version 3.10.9 is recommended.
-* Run Backend in a virtual environment.
-
 1) Navigate to the backend repository.
 
     ```
     cd Automated_Attendance_System/backend
     ```
 
-2) Then run this command to activate a python environment. After that activate the environment.
+2) Then run following commands to create and activate a python environment.
 
     ```
-    python -m venv "venv"
-    venv\bin\activate
+    py -m venv venv
     ```
-    If you are using a different version of python, you may have to type `venv\Scripts\Activate` to activate the created virtual environment.
+    ```
+    venv\Scripts\Activate
+    ```
 
     If your Python virtual environment works fine, then in the command line should be something similar to this.
     
@@ -57,7 +58,8 @@
 
     ```
     pip install "ROOT_PATH/Automated_Attendance_System/backend/dlib-19.22.99-cp310-cp310-win_amd64.whl"
-
+    ```
+    ```
     pip install face_recognition
     ```
     Replace `ROOT_PATH` text with actual path of parent directory of Automated_Attendance_System folder.
@@ -86,6 +88,8 @@
 
     ```
     python manage.py makemigrations
+    ```
+    ```
     python manage.py migrate
     ```
 
@@ -107,6 +111,8 @@ Important : Following steps must be taken, only when developing frontend applica
 
     ```
     python manage.py migrate database zero
+    ```
+    ```
     python manage.py migrate
     ```
 
@@ -120,18 +126,19 @@ Important : Following steps must be taken, only when developing frontend applica
     cd Automated_Attendance_System/cam_app
     ```
 
-2) Then run this command to activate a python environment. After that activate the environment.
+2) Then run following commands to create and activate a python environment.
 
     ```
-    python -m venv "venv"
-    venv\bin\activate
+    py -m venv venv
     ```
-    If you are using a different version of python, you may have to type `venv\Scripts\Activate` to activate the created virtual environment.
+    ```
+    venv\Scripts\Activate
+    ```
 
     If your Python virtual environment works fine, then in the command line should be something similar to this.
     
     ```
-    (venv) C:\...\Automated_Attendance_System\cam_app>
+    (venv) C:\...\Automated_Attendance_System\backend>
     ```
 
 3) Now, in order to install the required python libraries run this command.
