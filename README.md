@@ -13,7 +13,7 @@
     git clone https://github.com/SharadaShehan/Automated_Attendance_System.git
     ```
 
-### Requirements
+#### Requirements
 
 * Following applications must be installed and running on your local machine, before starting project.
 
@@ -26,8 +26,6 @@
 
 * Python version 3.10.9 is recommended.
 * Run Backend in a virtual environment.
-
-<br>
 
 1) Navigate to the backend repository.
 
@@ -46,10 +44,10 @@
     If your Python virtual environment works fine, then in the command line should be something similar to this.
     
     ```
-    (venv) C:\...\Airline_Reservation_System\backend>
+    (venv) C:\...\Automated_Attendance_System\backend>
     ```
 
-3) Now you have to install the required python libraries. Then run this command.
+3) Now, in order to install the required python libraries run this command.
 
     ```
     pip install -r requirements.txt
@@ -64,7 +62,7 @@
     ```
     Replace `ROOT_PATH` text with actual path of parent directory of Automated_Attendance_System folder.
 
-5) create `.env` file in `/backend/backend/` location with following variables in it.
+5) Create `.env` file in `/backend/backend/` location with following variables in it.
 
     ```
     DEBUG=1
@@ -84,7 +82,7 @@
     Replace `SQL_DATABASE`, `SQL_USER`, `SQL_PASSWORD`, `SQL_PORT` environment variables values with relevant credentials for your local PostgreSQL database and `MQTT_BROKER`, `MQTT_PORT`, `MQTT_TOPIC` environment variables values with relevant credentials for your local mosquitto broker.
     `MIN_MINUTES_THRESHOLD` is the minimum duration between two detections from same user to consider second detection as an attendance.
 
-6) In terminal move to location `Automated_Attendance_System/backend/` and Apply Model migrations to PostgreSQL database using following commands.
+6) In command line, move to location `Automated_Attendance_System/backend/` and Apply Model migrations to PostgreSQL database using following commands.
 
     ```
     python manage.py makemigrations
@@ -97,7 +95,7 @@
     python manage.py runserver
     ```
 
-Node : Following steps must be taken, only when developing frontend application. As data defined in scripts, do not contain sensitive user encodings, this sample database will not support cam stream app.
+Important : Following steps must be taken, only when developing frontend application. As data defined in scripts, do not contain sensitive user encodings, this sample database will not support cam stream app.
 
 8) Now you can populate your local database with set of data defined in scripts, by making an API call to below endpoint.
 
@@ -114,3 +112,55 @@ Node : Following steps must be taken, only when developing frontend application.
 
 ## Cam Stream App
 
+* Run Application in a virtual environment.
+
+1) Navigate to the cam app repository.
+
+    ```
+    cd Automated_Attendance_System/cam_app
+    ```
+
+2) Then run this command to activate a python environment. After that activate the environment.
+
+    ```
+    python -m venv "venv"
+    venv\bin\activate
+    ```
+    If you are using a different version of python, you may have to type `venv\Scripts\Activate` to activate the created virtual environment.
+
+    If your Python virtual environment works fine, then in the command line should be something similar to this.
+    
+    ```
+    (venv) C:\...\Automated_Attendance_System\cam_app>
+    ```
+
+3) Now, in order to install the required python libraries run this command.
+
+    ```
+    pip install -r requirements.txt
+    ```
+
+4) Create `.env` file in `/cam_app/` home directory with following variables in it.
+
+    ```
+    FRAME_WIDTH=200
+    FRAME_HEIGHT=150
+    BACKEND_BASE_URL=http://127.0.0.1:8000/middleware
+    MQTT_BROKER_URL=localhost
+    MQTT_BROKER_PORT=1883
+    MQTT_TOPIC=attendance
+    ```
+    Replace `MQTT_BROKER_URL`, `MQTT_BROKER_PORT`, `MQTT_TOPIC` environment variables values with relevant credentials for your mosquitto broker.
+    `FRAME_WIDTH`, `FRAME_HEIGHT` environment variables define the size of frames you are expecting to send to backend for processing.
+    
+5) In home directory, Run following command to start the Cam Stream App.
+    
+    ```
+    python main.py
+    ```
+
+## Frontend
+
+<p align="center" style="color:yellow;font-size:18px;">
+< --   Open for Contributions   -- >
+</p>
