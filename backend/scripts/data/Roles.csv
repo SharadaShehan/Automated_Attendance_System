@@ -1,4 +1,4 @@
-name, is_manager, is_executive
+name, has_read_permission, has_edit_permission
 Employee, 0, 0
 CEO, 1, 1
 CTO, 1, 0

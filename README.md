@@ -68,9 +68,14 @@ Note : Develop the backend in a virtual environment.
     SQL_PASSWORD=database_password
     SQL_HOST=localhost
     SQL_PORT=5432
+    MQTT_BROKER=localhost
+    MQTT_PORT=1883
+    MQTT_TOPIC=attendance
+    MIN_MINUTES_THRESHOLD=10
     ```
-    Replace `SQL_DATABASE`, `SQL_USER`, `SQL_PASSWORD`, `SQL_PORT` environment variables values with relevant credentials for your local PostgreSQL database.
-
+    Replace `SQL_DATABASE`, `SQL_USER`, `SQL_PASSWORD`, `SQL_PORT` environment variables values with relevant credentials for your local PostgreSQL database and `MQTT_BROKER`, `MQTT_PORT`, `MQTT_TOPIC` environment variables values with relevant credentials for your local mosquitto broker.
+    `MIN_MINUTES_THRESHOLD` is the minimum duration between two detections from same user to consider second detection as an attendance.
+ 
 6) Apply Model migrations to PostgreSQL database.
 
     ```
@@ -84,5 +89,17 @@ Note : Develop the backend in a virtual environment.
     python manage.py runserver
     ```
 
+Node : Following steps must be taken, only when developing frontend application. As data defined in scripts, do not contain sensitive user encodings, this sample database will not support cam stream app.
 
+8) Now you can populate your local database with set of data defined in scripts, by making an API call to below endpoint.
 
+    ```
+    http://127.0.0.1:8000/scripts/init
+    ```
+
+9) Then, If you want to reset your database with data defined in scripts, run below commands and then make an API call to above API.
+
+    ```
+    python manage.py migrate database zero
+    python manage.py migrate
+    ```

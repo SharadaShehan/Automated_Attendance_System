@@ -22,15 +22,15 @@ class InitView(APIView):
 
                 # create default role
                 default_role_data = next(reader)
-                name, is_manager, is_executive = default_role_data[0].strip(), int(default_role_data[1].strip()), int(default_role_data[2].strip())
+                name, has_read_permission, has_edit_permission = default_role_data[0].strip(), int(default_role_data[1].strip()), int(default_role_data[2].strip())
 
-                default_role = Role.objects.create(name=name, is_manager=is_manager, is_executive=is_executive)
+                default_role = Role.objects.create(name=name, has_read_permission=has_read_permission, has_edit_permission=has_edit_permission)
                 default_role.save()
 
                 # create other roles
                 for row in reader:
-                    name, is_manager, is_executive = row[0].strip(), int(row[1].strip()), int(row[2].strip())
-                    role = Role.objects.create(name=name, is_manager=is_manager, is_executive=is_executive)
+                    name, has_read_permission, has_edit_permission = row[0].strip(), int(row[1].strip()), int(row[2].strip())
+                    role = Role.objects.create(name=name, has_read_permission=has_read_permission, has_edit_permission=has_edit_permission)
                     role.save()
 
             company = Company.objects.create(name='Apple', default_role=default_role)
@@ -84,8 +84,8 @@ class InitView(APIView):
                     user.attendance = json.dumps(attendance_obj)
                     user.save()
 
-            print("Srcripts executed successfully")
-            return Response({'message': 'Hello World'})
+            print("Scripts executed successfully")
+            return Response({'message': 'Scripts executed successfully'})
 
         except Exception as ex:
             print(ex)

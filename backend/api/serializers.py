@@ -4,12 +4,12 @@ from rest_framework import serializers
 
 class ExecutiveViewEmployeeSerializer(serializers.ModelSerializer):
     role_name = serializers.SerializerMethodField()
-    is_manager = serializers.SerializerMethodField()
-    is_executive = serializers.SerializerMethodField()
+    has_read_permission = serializers.SerializerMethodField()
+    has_edit_permission = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'role_name', 'is_manager', 'is_executive', 'first_name', 'last_name', 'picture',
+        fields = ['id', 'email', 'role_name', 'has_read_permission', 'has_edit_permission', 'first_name', 'last_name', 'picture',
                   'attendance']
 
     def get_role_name(self, obj):
@@ -18,15 +18,15 @@ class ExecutiveViewEmployeeSerializer(serializers.ModelSerializer):
         except Role.DoesNotExist:
             return None
 
-    def get_is_manager(self, obj):
+    def get_has_read_permission(self, obj):
         try:
-            return Role.objects.get(id=obj.role.id).is_manager
+            return Role.objects.get(id=obj.role.id).has_read_permission
         except Role.DoesNotExist:
             return None
 
-    def get_is_executive(self, obj):
+    def get_has_edit_permission(self, obj):
         try:
-            return Role.objects.get(id=obj.role.id).is_executive
+            return Role.objects.get(id=obj.role.id).has_edit_permission
         except Role.DoesNotExist:
             return None
 
@@ -34,15 +34,15 @@ class ExecutiveViewEmployeeSerializer(serializers.ModelSerializer):
 class EmployeeViewEmployeeSerializer(ExecutiveViewEmployeeSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'role_name', 'is_manager', 'is_executive', 'first_name', 'last_name', 'picture',
+        fields = ['id', 'email', 'role_name', 'has_read_permission', 'has_edit_permission', 'first_name', 'last_name', 'picture',
                   'attendance', 'notifications']
 
 
 class EmployeeUpdateEmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        read_only_fields = ['company', ' user_api_code', 'role', 'email', 'attendance', 'password' ]
-        fields = ['first_name', 'last_name', 'picture', 'email_notifications' ]
+        read_only_fields = ['email', 'password', 'role', 'attendance']
+        fields = ['first_name', 'last_name', 'picture', 'notifications']
 
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
@@ -63,9 +63,8 @@ class EmployeeUpdateEmployeeSerializer(serializers.ModelSerializer):
 class ExecutiveUpdateEmployeeSerializer(ExecutiveViewEmployeeSerializer):
     class Meta:
         model = CustomUser
-        read_only_fields = ['id', 'password', 'notifications', 'picture']
-        fields = ['id', 'email', 'role', 'role_name', 'is_manager', 'is_executive', 'first_name', 'last_name',
-                  'attendance']
+        read_only_fields = ['id', 'password', 'notifications', 'picture', 'email', 'first_name', 'last_name']
+        fields = ['id', 'role', 'role_name', 'has_read_permission', 'has_edit_permission', 'attendance']
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -76,20 +75,20 @@ class UserLoginSerializer(serializers.Serializer):
 class ExecutiveViewRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = ['id', 'name', 'is_manager', 'is_executive' ]
+        fields = ['id', 'name', 'has_read_permission', 'has_edit_permission' ]
 
 class ExecutiveCreateRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = ['id', 'name', 'is_manager', 'is_executive' ]
+        fields = ['id', 'name', 'has_read_permission', 'has_edit_permission' ]
 
-    def create(self, validated_data):
-        request = self.context.get('request', None)
-        if request and request.user.id:
-            company = request.user.company
-            validated_data['company'] = company
-        else:
-            raise serializers.ValidationError("Login with a authorized account")
-        return super().create(validated_data)
+    # def create(self, validated_data):
+    #     request = self.context.get('request', None)
+    #     if request and request.user.id:
+    #         company = request.user.company
+    #         validated_data['company'] = company
+    #     else:
+    #         raise serializers.ValidationError("Login with a authorized account")
+    #     return super().create(validated_data)
 
 

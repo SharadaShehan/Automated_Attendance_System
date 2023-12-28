@@ -64,8 +64,8 @@ class MiddlewareCreateCompanySerializer(serializers.ModelSerializer):
         fields = ['name', 'username', 'password']
 
     def create(self, validated_data):
-        default_executive_role = Role.objects.create(name='Executive', is_manager=True, is_executive=True)
-        default_employee_role = Role.objects.create(name='Employee', is_manager=False, is_executive=False)
+        default_executive_role = Role.objects.create(name='CEO', has_read_permission=True, has_edit_permission=True)
+        default_employee_role = Role.objects.create(name='Employee', has_read_permission=False, has_edit_permission=False)
         default_executive_account = self.context['request'].data.get('default_executive_account')
         try:
             converted_photo = np.array(default_executive_account['photo']).astype(np.uint8)

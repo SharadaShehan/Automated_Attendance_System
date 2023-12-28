@@ -4,8 +4,8 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 class Role(models.Model):
     name = models.CharField(max_length=30, unique=True, null=False, blank=False)
-    is_manager = models.BooleanField(default=False)
-    is_executive = models.BooleanField(default=False)
+    has_read_permission = models.BooleanField(default=False)
+    has_edit_permission = models.BooleanField(default=False)
 
 
 class UserManager(BaseUserManager):

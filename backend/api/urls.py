@@ -11,6 +11,8 @@ urlpatterns = [
     path('executive/list-view/employee/', views.ExecutiveListViewEmployeeView.as_view()),
     path('executive/delete/employee/<int:pk>', views.ExecutiveDeleteEmployeeView.as_view()),
 
+    path('executive/view/attendance/<year>/<month>/<day>',views.ExecutiveViewAttendanceView.as_view()),
+
     path('login/', views.UserLoginView.as_view()),
     path('logout/', views.UserLogoutView.as_view()),
 
