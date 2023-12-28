@@ -48,11 +48,9 @@
     (venv) C:\...\Automated_Attendance_System\backend>
     ```
 
-3) Now, in order to install the required python libraries run this command.
-
-    ```
-    pip install -r requirements.txt
-    ```
+3) Now, in order to install the required python libraries, open backend project in PyCharm IDE.
+Configure IDE to use python interpreter which is in the created virtual environment.
+Then, open `requirements.txt` file in IDE and IDE will recommend to install libraries listed in file. Allow it to install them. IDE may fail to install `dlib` and `face_recognition` libraries.
 
 4) Run below commands to install `dlib` and `face_recognition` libraries.
 
