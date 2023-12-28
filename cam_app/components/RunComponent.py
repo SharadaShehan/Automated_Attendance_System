@@ -138,6 +138,7 @@ class SpeechThread(Thread):
     def run(self):
         try:
             if self.client.connect(self.broker, self.port, 60) == 0:
+
                 self.client.subscribe(self.topic)
                 self.parent.speech_state_label.config(text="Running")
                 while self.parent.speech_thread_state.get():

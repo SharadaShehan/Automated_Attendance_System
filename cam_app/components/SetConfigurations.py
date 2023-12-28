@@ -3,6 +3,7 @@ from tkinter import ttk
 import cv2
 from PIL import Image, ImageTk
 from functions import ConfigRead
+from .RunComponent import RunPage
 
 
 class CameraSettingsPage(tk.Frame):
@@ -14,7 +15,15 @@ class CameraSettingsPage(tk.Frame):
         self.registration_camera = None
         self.enter_camera = None
         self.exit_camera = None
-        self.config_dict = ConfigRead.read_config()
+        if ConfigRead.check_config_initialized():
+            self.config_dict = ConfigRead.read_config()
+        else:
+            self.config_dict = {
+                'CAPTURE': {
+                    'frame_width': 200,
+                    'frame_height': 150
+                }
+            }
 
         for i in range(10):  # You can adjust the range based on the number of devices you expect
             self.cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
@@ -154,6 +163,9 @@ class CameraSettingsPage(tk.Frame):
         else:
             status = ConfigRead.create_config(registration_camera_index, enter_camera_index, exit_camera_index)
             if status:
+                self.controller.runAppPage = RunPage(self.controller.notebook, self.controller)
+                self.controller.notebook.add(self.controller.runAppPage, text="Run App")
+                self.config_dict = ConfigRead.read_config()
                 self.controller.notebook.select(0)
             else:
                 self.show_error_message("Error saving configurations. Please try again.")

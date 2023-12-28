@@ -50,7 +50,7 @@ class MLModelInputView(APIView):
         try:
             company = Company.objects.get_company()
             if company.access_token == request.headers.get('Authorization', None):
-                if MLModel.add_input(request.data):
+                if MLModel.add_task(request.data):
                     return Response({'message': 'Input added to queue'})
                 return Response({'message': 'Failed to add input to queue'}, status=400)
             else:

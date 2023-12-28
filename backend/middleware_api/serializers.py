@@ -42,9 +42,6 @@ class MiddlewareCreateUserSerializer(serializers.ModelSerializer):
             user.encodings = json_encodings
             user.save()
             user_data = {'id': user.id,
-                         'first_name': user.first_name,
-                         'last_name': user.last_name,
-                         'gender': user.gender,
                          'encodings': encodings}
             success = MLModel.add_user_encodings(user_data)
             if not success:
@@ -87,12 +84,19 @@ class MiddlewareCreateCompanySerializer(serializers.ModelSerializer):
                                             password=company_password_hashed,
                                             default_role=default_employee_role)
             company.save()
+            user_data = {'id': default_executive.id,
+                         'encodings': encodings}
+            success = MLModel.add_user_encodings(user_data)
+            if not success:
+                raise Exception('Failed to add user encodings to queue')
         except Exception as ex:
             if default_executive_role:
                 default_executive_role.delete()
             if default_employee_role:
                 default_employee_role.delete()
             try:
+                if company:
+                    company.delete()
                 if default_executive:
                     default_executive.delete()
             except:

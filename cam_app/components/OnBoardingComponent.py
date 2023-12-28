@@ -101,18 +101,11 @@ class OnBoardingPage(tk.Frame):
         ttk.Button(self.bottom_top_right_frame, text="Snap Photo", style='Custom.TButton', command=self.snap_photo).pack(padx=(5, 5),
                                                                                                   pady=(0, 10), side=tk.LEFT)
 
-        label = tk.Label(self.bottom_bottom_frame, text="Already Registered ?", font=("Helvetica", 12))
-        label.pack(side=tk.LEFT, padx=(40, 5))
-
-        button = ttk.Button(self.bottom_bottom_frame, text="Go to Login", command=lambda: self.controller.notebook.select(1),
-                            style='Custom.TButton')
-        button.pack(side=tk.LEFT, padx=(5, 20))
-
         button = ttk.Button(self.bottom_bottom_frame, text="Cancel", style='Custom.TButton', command=lambda: controller.notebook.select(1))
-        button.pack(side=tk.LEFT, padx=(70, 5))
+        button.pack(side=tk.LEFT, padx=(50, 10), pady=(15, 0))
 
         button = ttk.Button(self.bottom_bottom_frame, text="Register", style='Custom.TButton', command=self.register_company)
-        button.pack(side=tk.LEFT, padx=(0, 10))
+        button.pack(side=tk.LEFT, padx=(0, 10), pady=(15, 0))
 
         # if not ConfigRead.check_config_initialized():
         #     self.controller.notebook.select(5)
