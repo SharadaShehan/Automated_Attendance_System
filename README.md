@@ -167,5 +167,5 @@ Important : Following steps must be taken, only when developing frontend applica
 ## Frontend
 
 <p align="center" style="color:yellow;font-size:18px;">
-< --   Open for Contributions   -- >
+< --  Flutter App is open for Contributions   -- >
 </p>
