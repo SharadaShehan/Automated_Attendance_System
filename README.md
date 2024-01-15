@@ -3,7 +3,7 @@
 <h2 align="center">🏢System Architecture🛠️</h2>
 
 
-![sysArchi](resources/Attendsense_System_Architecture.jpg)
+![sysArchi](resources/System_Architecture.jpg)
 
 # Developer Guide
 
