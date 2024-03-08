@@ -121,7 +121,7 @@ Important : Following steps must be taken, only when developing frontend applica
 1) Navigate to the cam app repository.
 
     ```
-    cd Automated_Attendance_System/cam_app
+    cd Automated_Attendance_System/cam_application
     ```
 
 2) Then run following commands to create and activate a python environment.
@@ -145,7 +145,7 @@ Important : Following steps must be taken, only when developing frontend applica
     pip install -r requirements.txt
     ```
 
-4) Create `.env` file in `/cam_app/` home directory with following variables in it.
+4) Create `.env` file in `/cam_application/` home directory with following variables in it.
 
     ```
     FRAME_WIDTH=200
