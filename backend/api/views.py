@@ -8,7 +8,6 @@ import re, json
 
 class SetAuthenticationMethod(DebugFullAuthentication): pass
 
-
 # CRUD operations for Employee Table
 
 class EmployeeViewEmployeeView(ViewOnlyOwnAccountRestriction, SetAuthenticationMethod, generics.RetrieveAPIView):

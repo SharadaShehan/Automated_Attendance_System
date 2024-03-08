@@ -28,6 +28,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
+HUB_SECRET_KEY = env('HUB_SECRET_KEY')
+MIN_MINUTES_THRESHOLD = env('MIN_MINUTES_THRESHOLD')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(env('DEBUG')))
@@ -68,6 +70,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 
 ROOT_URLCONF = 'backend.urls'

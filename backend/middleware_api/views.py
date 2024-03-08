@@ -4,9 +4,17 @@ from rest_framework.response import Response
 from database.models import CustomUser, Company
 from .serializers import MiddlewareCreateUserSerializer, MiddlewareCreateCompanySerializer
 # from .ml_model import MLModel
+from django.conf import settings
 from werkzeug.security import check_password_hash
 import secrets
+import json
+import hashlib
+import re
+import datetime
 
+hub_secret_key = settings.HUB_SECRET_KEY
+hashed_hub_secret_key = hashlib.sha256(hub_secret_key.encode('utf-8')).hexdigest()
+min_minutes_threshold = int(settings.MIN_MINUTES_THRESHOLD)
 
 class MiddlewareCreateUserView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -67,6 +75,66 @@ class CompanyPortalLoginView(APIView):
         # Generate a random string with the specified length
         random_string = secrets.token_hex(length // 2)
         return random_string[:length]
+
+
+class UpdateUserEntranceView(APIView):
+    def get(self, request, *args, **kwargs):
+        secret_key = request.headers.get('hub-secret-key', None)
+        if secret_key == hashed_hub_secret_key:
+            user_id = kwargs.get('id')
+            time_received = f"{str(kwargs.get('hour')).zfill(2)}-{str(kwargs.get('minute')).zfill(2)}"
+            # time must be received in the format: '%H-%M'
+            if user_id and time_received:
+                try:
+                    # check if datetime is in the correct format
+                    if not re.match(r'^\d{2}-\d{2}$', time_received):
+                        return Response({'message': 'Invalid time format'}, status=400)
+                    date = datetime.datetime.now().strftime("%Y-%m-%d")
+                    date_strings_list = date.split("-")
+
+                    detected_user = CustomUser.objects.get(id=user_id)
+                    attendance_obj = json.loads(detected_user.attendance)
+
+                    # Check if the date is already in the attendance object unlless create it
+                    if date_strings_list[0] in attendance_obj:
+                        if date_strings_list[1] in attendance_obj[date_strings_list[0]]:
+                            if date_strings_list[2] in attendance_obj[date_strings_list[0]][date_strings_list[1]]:
+                                pass
+                            else:
+                                attendance_obj[date_strings_list[0]][date_strings_list[1]][date_strings_list[2]] = {
+                                    'entrance': [], 'leave': []}
+                        else:
+                            attendance_obj[date_strings_list[0]][date_strings_list[1]] = {
+                                date_strings_list[2]: {'entrance': [], 'leave': []}}
+                    else:
+                        attendance_obj[date_strings_list[0]] = {
+                            date_strings_list[1]: {date_strings_list[2]: {'entrance': [], 'leave': []}}}
+
+                    time_format = '%H-%M'  # expected format of time
+                    entrance_list_of_day = attendance_obj[date_strings_list[0]][date_strings_list[1]][date_strings_list[2]]['entrance']
+                    if len(entrance_list_of_day) > 0:
+                        last_entrance = datetime.datetime.strptime(entrance_list_of_day[-1], time_format)
+                        current_entrance = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%m-%d %H-%M").split()[1], time_format)
+                        # Check if the time difference between the last entrance and the current entrance is
+                        # less than the minimum minutes threshold
+                        received_time = datetime.datetime.strptime(time_received, time_format)
+                        if (current_entrance - last_entrance) < datetime.timedelta(minutes=min_minutes_threshold) or \
+                                (last_entrance - received_time) < datetime.timedelta(minutes=min_minutes_threshold):
+                            return Response({'message': 'Entrance not updated. Minimum minutes threshold not reached'}, status=400)
+                    attendance_obj[date_strings_list[0]][date_strings_list[1]][date_strings_list[2]]['entrance'].append(time_received)
+
+                    # If updated successfully, save the user
+                    detected_user.attendance = json.dumps(attendance_obj)
+                    detected_user.save()
+
+                    return Response({'message': 'Entrance updated successfully', 'firstName': detected_user.first_name,
+                                     'lastName': detected_user.last_name, 'time': time_received})
+                except CustomUser.DoesNotExist:
+                    return Response({'message': 'User does not exist'}, status=400)
+            else:
+                return Response({'message': 'Invalid path parameters'}, status=400)
+        else:
+            return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # class MLModelInputView(APIView):

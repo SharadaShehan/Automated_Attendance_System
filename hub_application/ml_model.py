@@ -70,6 +70,9 @@ class MLModel:
 
                         x = datetime.datetime.now()
                         date, time = x.strftime("%Y-%m-%d %H-%M").split()
+
+                        # ------------------ backend will require date in format %Y-%m-%d %H-%M ------------------
+
                         date_strings_list = date.split("-")
 
                         # Check if the date is already in the attendance object unlless create it
