@@ -3,7 +3,7 @@ from rest_framework import serializers, exceptions
 import json
 import face_recognition
 import numpy as np
-from .ml_model import MLModel
+# from .ml_model import MLModel
 from werkzeug.security import generate_password_hash
 
 
@@ -43,10 +43,12 @@ class MiddlewareCreateUserSerializer(serializers.ModelSerializer):
             user.save()
             user_data = {'id': user.id,
                          'encodings': encodings}
-            success = MLModel.add_user_encodings(user_data)
-            if not success:
-                user.delete()
-                raise Exception('Failed to add user encodings to queue')
+            # success = MLModel.add_user_encodings(user_data)
+            # if not success:
+            #     user.delete()
+            #     raise Exception('Failed to add user encodings to queue')
+
+            # add logic to inform the ML model of the new user
         except Exception as e:
             user.delete()
             raise exceptions.ValidationError({'message': f'{e}'})
@@ -86,9 +88,11 @@ class MiddlewareCreateCompanySerializer(serializers.ModelSerializer):
             company.save()
             user_data = {'id': default_executive.id,
                          'encodings': encodings}
-            success = MLModel.add_user_encodings(user_data)
-            if not success:
-                raise Exception('Failed to add user encodings to queue')
+            # success = MLModel.add_user_encodings(user_data)
+            # if not success:
+            #     raise Exception('Failed to add user encodings to queue')
+
+            # add logic to inform the ML model of the new user
         except Exception as ex:
             if default_executive_role:
                 default_executive_role.delete()

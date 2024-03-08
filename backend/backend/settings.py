@@ -90,8 +90,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-MQTT_BROKER_ADDRESS = 'mqtt://127.0.0.1:1883'
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 

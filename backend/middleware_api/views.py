@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from database.models import CustomUser, Company
 from .serializers import MiddlewareCreateUserSerializer, MiddlewareCreateCompanySerializer
-from .ml_model import MLModel
+# from .ml_model import MLModel
 from werkzeug.security import check_password_hash
 import secrets
 
@@ -45,20 +45,6 @@ class MiddlewareCreateCompanyView(generics.CreateAPIView):
         return random_string[:length]
 
 
-class MLModelInputView(APIView):
-    def post(self, request, *args, **kwargs):
-        try:
-            company = Company.objects.get_company()
-            if company.access_token == request.headers.get('Authorization', None):
-                if MLModel.add_task(request.data):
-                    return Response({'message': 'Input added to queue'})
-                return Response({'message': 'Failed to add input to queue'}, status=400)
-            else:
-                return Response({'message': 'Invalid access token'}, status=401)
-        except Company.DoesNotExist:
-            return Response({'message': 'Company does not exist'}, status=400)
-
-
 class CompanyPortalLoginView(APIView):
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
@@ -82,3 +68,16 @@ class CompanyPortalLoginView(APIView):
         random_string = secrets.token_hex(length // 2)
         return random_string[:length]
 
+
+# class MLModelInputView(APIView):
+#     def post(self, request, *args, **kwargs):
+#         try:
+#             company = Company.objects.get_company()
+#             if company.access_token == request.headers.get('Authorization', None):
+#                 if MLModel.add_task(request.data):
+#                     return Response({'message': 'Input added to queue'})
+#                 return Response({'message': 'Failed to add input to queue'}, status=400)
+#             else:
+#                 return Response({'message': 'Invalid access token'}, status=401)
+#         except Company.DoesNotExist:
+#             return Response({'message': 'Company does not exist'}, status=400)
