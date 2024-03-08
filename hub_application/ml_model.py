@@ -31,6 +31,7 @@ class MLModel:
         liveness_model_dir = os.path.join(current_directory, "ml_model_src\\resources\\anti_spoof_models")
         # Load the users data from the database
         users_data = CustomUser.objects.all().values('id', 'encodings',)
+        #  backend sends in this format: [{'id': 1, 'encodings': '[0.1, 0.2, 0.3, ...]'}, {'id': 2, 'encodings': '[0.1, 0.2, 0.3, ...]'}, ...]
         cls.users_data = [{'id': user_data['id'],
                            'encodings': np.array(json.loads(user_data['encodings']))} for user_data in users_data]
 
