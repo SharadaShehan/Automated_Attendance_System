@@ -25,9 +25,9 @@ pip3 install face_recognition
 # Create .env file in inner backend directory with environment variables
 environment_variables_file="backend/.env"
 cat << EOF > "$environment_variables_file"
-DEBUG=1
-SECRET_KEY='django-insecure-7=4n(di4tfh13+__prvqy7jz3gf*=i2k+g-zbh$473axf^h60!'
+DEBUG=0
 DJANGO_ALLOWED_HOSTS=localhost
+SECRET_KEY='django-insecure-7=4n(di4tfh13+__prvqy7jz3gf*=i2k+g-zbh$473axf^h60!'
 SQL_ENGINE=django.db.backends.postgresql
 SQL_DATABASE=attendsensedb
 SQL_USER=postgres

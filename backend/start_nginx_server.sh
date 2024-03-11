@@ -10,7 +10,7 @@ fi
 server_name="$1"
 
 if [ -z "$server_name" ]; then
-  echo "Please provide a server name as an argument."
+  echo "Please provide a server name or ip address as an argument."
   exit 1
 fi
 
