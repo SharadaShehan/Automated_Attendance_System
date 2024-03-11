@@ -28,8 +28,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
-HUB_SECRET_KEY = env('HUB_SECRET_KEY')
-MIN_MINUTES_THRESHOLD = env('MIN_MINUTES_THRESHOLD')
+
+RABBITMQ_USER = env('RABBITMQ_USER')
+RABBITMQ_PASSWORD = env('RABBITMQ_PASSWORD')
+RABBITMQ_HOST = env('RABBITMQ_HOST')
+RABBITMQ_PORT = env('RABBITMQ_PORT')
+RABBITMQ_QUEUE = env('RABBITMQ_QUEUE')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(env('DEBUG')))
