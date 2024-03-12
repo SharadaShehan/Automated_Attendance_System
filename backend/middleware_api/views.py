@@ -6,7 +6,7 @@ from .serializers import MiddlewareCreateUserSerializer, MiddlewareCreateCompany
 from django.conf import settings
 from werkzeug.security import check_password_hash
 import secrets
-import pika
+import pika, pickle
 
 rabbitmq_user = settings.RABBITMQ_USER
 rabbitmq_password = settings.RABBITMQ_PASSWORD
@@ -85,7 +85,7 @@ class MLModelInputView(APIView):
         try:
             company = Company.objects.get_company()
             if company.access_token == request.headers.get('Authorization', None):
-                channel.basic_publish(exchange='', routing_key=rabbitmq_queue, body=request.data)
+                channel.basic_publish(exchange='', routing_key=rabbitmq_queue, body=pickle.dumps(request.data))
                 return Response({'message': 'Data sent for processing'}, status=200)
             else:
                 return Response({'message': 'Invalid access token'}, status=401)
