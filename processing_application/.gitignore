@@ -1,0 +1,11 @@
+*.pyc
+__pycache__
+db.sqlite3
+/env
+/venv
+/database/migrations
+/middleware_api/migrations
+/scripts/migrations
+*.env
+.vscode
+.idea
