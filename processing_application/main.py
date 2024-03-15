@@ -1,6 +1,6 @@
 import sys, os, functools
 from Database import connect_to_database, get_users_encodings
-from RabbitMQ import connect_to_rabbitmq, process_messages
+from RabbitMQ import connect_to_rabbitmq, process_messages, process_single_message
 from MessageHandler import callback_function
 from MosquittoMQTT import connect_to_mqtt
 
@@ -29,6 +29,7 @@ def main():
     partial_callback = functools.partial(callback_function, users_encodings, db_conn, mqtt_client)
 
     # process_messages(rabbitmq_channel, partial_callback)
+    process_single_message(rabbitmq_channel, partial_callback)
 
     db_conn.close()
     rabbitmq_channel.close()

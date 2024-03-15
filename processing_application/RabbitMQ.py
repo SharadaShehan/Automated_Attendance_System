@@ -36,3 +36,16 @@ def process_messages(channel, callback_function):
         print("Error while processing messages:", error)
         return None
 
+def process_single_message(channel, callback_function):
+    """Starts consuming a single message from the RabbitMQ server."""
+    try:
+        rabbitmq_queue = os.getenv('RABBITMQ_QUEUE')
+        method_frame, header_frame, body = channel.basic_get(queue=rabbitmq_queue)
+        if method_frame:
+            callback_function(channel, method_frame, header_frame, body)
+        else:
+            print('No message returned')
+
+    except (Exception, pika.exceptions.AMQPError) as error:
+        print("Error while processing a single message:", error)
+        return None
