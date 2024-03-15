@@ -1,6 +1,7 @@
-import os
+import os, datetime, pickle
 from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
+from Database import get_user_data
 
 load_dotenv()
 
@@ -23,14 +24,27 @@ def connect_to_mqtt():
         print("Error while connecting to MQTT:", error)
         return None
 
-
-def publish_message(client, message):
+def publish_event(client, message):
     """Publishes a message to the MQTT broker."""
     try:
         mqtt_topic = os.getenv('MQTT_TOPIC')
         client.publish(mqtt_topic, message)
         print("Message published successfully")
+        return True
 
     except (Exception, mqtt.error) as error:
         print("Error while publishing message:", error)
         return None
+
+def attendance_updated_event(client, db_conn, user_id, entrance):
+    """Publishes an attendance update event to the MQTT broker."""
+    user_data = get_user_data(user_id, db_conn)
+    message = {
+        "first_name": user_data[2],
+        "last_name": user_data[3],
+        "gender": user_data[4],
+        "entrance": int(entrance),
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    success = publish_event(client, pickle.dumps(message))
+    return success

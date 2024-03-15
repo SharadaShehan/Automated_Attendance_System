@@ -1,5 +1,6 @@
 import psycopg2, os, json, numpy as np
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -22,7 +23,7 @@ def connect_to_database():
         print("Error while connecting to database:", error)
         return None
 
-def get_users_encodings(db_conn):
+def get_users_data(db_conn):
     """Retrieves the user encodings from the database."""
     try:
         cursor = db_conn.cursor()
@@ -37,3 +38,27 @@ def get_users_encodings(db_conn):
     except (Exception, psycopg2.Error) as error:
         print("Error while retrieving user encodings:", error)
         return None
+
+def get_user_data(user_id, db_conn):
+    """Retrieves the user data from the database."""
+    try:
+        cursor = db_conn.cursor()
+        cursor.execute(
+            f"SELECT id, attendance, first_name, last_name, gender FROM database_customuser WHERE id={user_id}")
+        user_data = cursor.fetchone()
+        return user_data
+    except (Exception, psycopg2.Error) as error:
+        print("Error while retrieving user data:", error)
+        return None
+
+def update_user_attendance(user_id, attendance, db_conn):
+    """Updates the user attendance in the database."""
+    try:
+        cursor = db_conn.cursor()
+        cursor.execute(
+            f"UPDATE database_customuser SET attendance='{attendance}' WHERE id={user_id}")
+        db_conn.commit()
+        return True
+    except (Exception, psycopg2.Error) as error:
+        print("Error while updating user attendance:", error)
+        return False

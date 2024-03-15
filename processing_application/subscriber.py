@@ -27,7 +27,7 @@ client.username_pw_set(username, password)
 client.connect(broker_address, port, 60)
 
 # Subscribe to topics after connecting
-client.subscribe("test")
+client.subscribe("attendance")
 
 # Start the network loop
 client.loop_forever()
