@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-import cv2, requests
+import cv2, requests, pickle
 from functions import ConfigRead, Tokens, Utils
 from threading import Thread
 import time, os
@@ -128,17 +128,18 @@ class SpeechThread(Thread):
     def __init__(self, parent):
         super().__init__()
         self.parent = parent
-        self.client = paho.Client()
+        self.client = paho.Client("mqttClient", protocol=paho.MQTTv31)
         self.client.on_message = self.on_message
-        self.broker = self.parent.config_dict['MQTT']['broker']
+        self.host = self.parent.config_dict['MQTT']['host']
         self.port = int(self.parent.config_dict['MQTT']['port'])
         self.topic = self.parent.config_dict['MQTT']['topic']
+        self.user = self.parent.config_dict['MQTT']['user']
+        self.password = self.parent.config_dict['MQTT']['password']
         self.engine = pyttsx3.init()
 
     def run(self):
         try:
-            if self.client.connect(self.broker, self.port, 60) == 0:
-
+            if self.client.connect(self.host, self.port, 60) == 0:
                 self.client.subscribe(self.topic)
                 self.parent.speech_state_label.config(text="Running")
                 while self.parent.speech_thread_state.get():
@@ -153,9 +154,13 @@ class SpeechThread(Thread):
         self.parent.speech_button.config(text="Start")
         self.parent.speech_thread_state.set(False)
 
-    def on_message(self, client, userdata, msg):
-        print(msg.topic+" "+msg.payload.decode("utf-8"))
-        text_to_speak = msg.payload.decode("utf-8")
+    def on_message(self, client, userdata, message):
+        message = pickle.loads(message.payload)
+        print(message)
+        text_to_speak = ('Hello ' if message['entrance'] == 1 else 'Goodbye ') + \
+                        ("Mr. " if message['gender'] == 'Male' else "Ms. ") + \
+                        message['first_name'] + ' ' + message['last_name']
+        print(text_to_speak)
         self.engine.say(text_to_speak)
         self.engine.runAndWait()
 

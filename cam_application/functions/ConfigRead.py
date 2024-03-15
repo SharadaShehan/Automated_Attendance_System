@@ -18,9 +18,11 @@ def create_config(registration_camera, enter_camera, exit_camera):
         'base_url': os.getenv('BACKEND_BASE_URL')
     }
     config['MQTT'] = {
-        'broker': os.getenv('MQTT_BROKER_URL'),
-        'port': int(os.getenv('MQTT_BROKER_PORT')),
-        'topic': os.getenv('MQTT_TOPIC')
+        'host': os.getenv('MQTT_HOST'),
+        'port': int(os.getenv('MQTT_PORT')),
+        'topic': os.getenv('MQTT_TOPIC'),
+        'user': os.getenv('MQTT_USER'),
+        'password': os.getenv('MQTT_PASSWORD')
     }
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
@@ -35,7 +37,7 @@ def check_config_initialized():
         if set(config['BACKEND'].keys()) == {'base_url'} and config['BACKEND']['base_url'] and \
            set(config['CAPTURE'].keys()) == {'frame_width', 'frame_height'} and config['CAPTURE']['frame_width'] and config['CAPTURE']['frame_height'] and \
            set(config['CAMERAS'].keys()) == {'registration_camera', 'enter_camera', 'exit_camera'} and config['CAMERAS']['registration_camera'] and config['CAMERAS']['enter_camera'] and config['CAMERAS']['exit_camera'] and \
-           set(config['MQTT'].keys()) == {'broker', 'port', 'topic'} and config['MQTT']['broker'] and config['MQTT']['port'] and config['MQTT']['topic']:
+           set(config['MQTT'].keys()) == {'host', 'port', 'topic', 'user', 'password'} and config['MQTT']['host'] and config['MQTT']['port'] and config['MQTT']['topic'] and config['MQTT']['user'] and config['MQTT']['password']:
             return True
     return False
 
@@ -89,7 +91,7 @@ def check_company_initialized():
         if set(config['BACKEND'].keys()) == {'base_url'} and config['BACKEND']['base_url'] and \
            set(config['CAPTURE'].keys()) == {'frame_width', 'frame_height'} and config['CAPTURE']['frame_width'] and config['CAPTURE']['frame_height'] and \
            set(config['CAMERAS'].keys()) == {'registration_camera', 'enter_camera', 'exit_camera'} and config['CAMERAS']['registration_camera'] and config['CAMERAS']['enter_camera'] and config['CAMERAS']['exit_camera'] and \
-           set(config['MQTT'].keys()) == {'broker', 'port', 'topic'} and config['MQTT']['broker'] and config['MQTT']['port'] and config['MQTT']['topic'] and \
+           set(config['MQTT'].keys()) == {'host', 'port', 'topic', 'user', 'password'} and config['MQTT']['host'] and config['MQTT']['port'] and config['MQTT']['topic'] and config['MQTT']['user'] and config['MQTT']['password'] and \
            set(config['COMPANY'].keys()) == {'company_name'} and config['COMPANY']['company_name']:
             return True
     return False
