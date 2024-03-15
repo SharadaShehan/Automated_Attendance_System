@@ -1,6 +1,6 @@
 import os, pickle, json, datetime
 import numpy as np
-from ml_model_src.functions import liveness_checker
+# from ml_model_src.functions import liveness_checker
 import face_recognition
 from Database import get_user_data, update_user_attendance
 from dotenv import load_dotenv
@@ -44,9 +44,10 @@ def identify_user(photo, users_data):
     """Identifies the user in the photo."""
     liveness_model_dir = "ml_model_src/resources/anti_spoof_models"
     converted_image = np.array(photo).astype(np.uint8)
-    liveness, value = liveness_checker.test(image=converted_image, model_dir=liveness_model_dir, device_id=0)
+    # liveness, value = liveness_checker.test(image=converted_image, model_dir=liveness_model_dir, device_id=0)
 
-    if liveness == 1:
+    # if liveness == 1:
+    if True:
         try:
             # Get the face encodings of the image
             encoded_image = face_recognition.face_encodings(converted_image)[0]
