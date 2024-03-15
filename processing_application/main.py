@@ -1,43 +1,22 @@
-import pika, sys, os, environ, psycopg2
+import sys, os, functools
 from Database import connect_to_database, get_users_encodings
-
-env = environ.Env()
-environ.Env.read_env()
-
-min_minutes_threshold = int(env('MIN_MINUTES_THRESHOLD'))
-
-def connect_to_rabbitmq(callback_function):
-    """Establishes a connection to the RabbitMQ server."""
-    try:
-        # Read credentials from environment variables
-        rabbitmq_user = env('RABBITMQ_USER')
-        rabbitmq_password = env('RABBITMQ_PASSWORD')
-        rabbitmq_host = env('RABBITMQ_HOST')
-        rabbitmq_port = env('RABBITMQ_PORT')
-        rabbitmq_queue = env('RABBITMQ_QUEUE')
-
-        # Create a connection to the RabbitMQ server
-        credentials = pika.PlainCredentials(username=rabbitmq_user, password=rabbitmq_password)
-        parameters = pika.ConnectionParameters(host=rabbitmq_host, port=rabbitmq_port, virtual_host='/', credentials=credentials)
-        connection = pika.BlockingConnection(parameters)
-        channel = connection.channel()
-        channel.basic_consume(queue=rabbitmq_queue, on_message_callback=callback_function, auto_ack=True)
-        return channel
-
-    except (Exception, pika.exceptions.AMQPError) as error:
-        print("Error while connecting to RabbitMQ:", error)
-        return None
-
-
-
-
-def callback(ch, method, properties, body):
-    print(f" [x] Received {body}")
-
+from RabbitMQ import connect_to_rabbitmq, process_messages
+from MessageHandler import callback_function
+from MosquittoMQTT import connect_to_mqtt
 
 def main():
     db_conn = connect_to_database()
     if db_conn is None:
+        print("Exiting...")
+        return
+
+    rabbitmq_channel = connect_to_rabbitmq()
+    if rabbitmq_channel is None:
+        print("Exiting...")
+        return
+
+    mqtt_client = connect_to_mqtt()
+    if mqtt_client is None:
         print("Exiting...")
         return
 
@@ -46,14 +25,15 @@ def main():
         print("Exiting...")
         return
     print(users_encodings)
-    #
-    # channel = connect_to_rabbitmq(callback)
-    # if channel is None:
-    #     print("Exiting...")
-    #     return
-    #
-    # print(' [*] Waiting for messages. To exit press CTRL+C')
-    # channel.start_consuming()
+
+    partial_callback = functools.partial(callback_function, users_encodings, db_conn, mqtt_client)
+
+    # process_messages(rabbitmq_channel, partial_callback)
+
+    db_conn.close()
+    rabbitmq_channel.close()
+
+    print("Main function finished")
 
 
 if __name__ == '__main__':
