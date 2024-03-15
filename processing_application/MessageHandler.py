@@ -23,14 +23,18 @@ def callback_function(users_data, db_conn, mqtt_client, ch, method, properties, 
             ch.basic_ack(delivery_tag=method.delivery_tag)
             return
 
+        print("reached 1")
         if entrance:
             success = update_entrance(user_id, db_conn)
         else:
             success = update_leave(user_id, db_conn)
 
+        print("reached 2")
         # Publish a message to the MQTT broker
         if success:
             attendance_updated_event(mqtt_client, db_conn, user_id, entrance)
+
+        print("reached 3")
 
         # Acknowledge the message
         ch.basic_ack(delivery_tag=method.delivery_tag)
