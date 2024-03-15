@@ -79,28 +79,22 @@ def update_entrance(user_id, db_conn):
 
     try:
         user_data = get_user_data(user_id, db_conn)
-        print("reached 1")
+        print(user_data[1])
         attendance_obj = json.loads(user_data[1])
-        print("reached 2")
         # Check if the date is already in the attendance object unlless create it
         attendance_obj = format_attendance_object(date_strings_list, attendance_obj)
         # update the entrance times list for the current day
         time_format = '%H-%M'
         entrance_list_of_day = attendance_obj[date_strings_list[0]][date_strings_list[1]][date_strings_list[2]]['entrance']
-        print("reached 3")
         if len(entrance_list_of_day) > 0:
             last_entrance = datetime.datetime.strptime(entrance_list_of_day[-1], time_format)
             current_entrance = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%m-%d %H-%M").split()[1], time_format)
             # Check if the time difference between the last entrance and the current entrance is less than the minimum minutes threshold
             if current_entrance - last_entrance < datetime.timedelta(minutes=min_minutes_threshold):
                 return False
-        print("reached 4")
         attendance_obj[date_strings_list[0]][date_strings_list[1]][date_strings_list[2]]['entrance'].append(time)
-        print("reached 5")
         attendance = json.dumps(attendance_obj)
-        print("reached 6")
         success = update_user_attendance(user_id, attendance, db_conn)
-        print("reached 7")
         return success
 
     except Exception as e:
