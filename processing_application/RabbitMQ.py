@@ -28,7 +28,7 @@ def process_messages(channel, callback_function):
     """Starts consuming messages from the RabbitMQ server."""
     try:
         rabbitmq_queue = os.getenv('RABBITMQ_QUEUE')
-        channel.basic_consume(queue=rabbitmq_queue, on_message_callback=callback_function, auto_ack=True)
+        channel.basic_consume(queue=rabbitmq_queue, on_message_callback=callback_function, auto_ack=False)
         print(' [*] Waiting for messages. To exit press CTRL+C')
         channel.start_consuming()
 

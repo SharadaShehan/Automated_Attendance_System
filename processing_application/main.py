@@ -28,13 +28,14 @@ def main():
 
     partial_callback = functools.partial(callback_function, users_encodings, db_conn, mqtt_client)
 
-    # process_messages(rabbitmq_channel, partial_callback)
-    process_single_message(rabbitmq_channel, partial_callback)
+    process_messages(rabbitmq_channel, partial_callback)
 
+    print("Closing connections...")
     db_conn.close()
+    mqtt_client.disconnect()
     rabbitmq_channel.close()
 
-    print("Main function finished")
+    print("Main function exited")
 
 
 if __name__ == '__main__':
