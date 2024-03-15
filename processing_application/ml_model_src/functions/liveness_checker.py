@@ -3,9 +3,9 @@ import numpy as np
 import warnings
 import time
 
-from middleware_api.ml_model_src.src.anti_spoof_predict import AntiSpoofPredict
-from middleware_api.ml_model_src.src.generate_patches import CropImage
-from middleware_api.ml_model_src.src.utility import parse_model_name
+from ml_model_src.src.anti_spoof_predict import AntiSpoofPredict
+from ml_model_src.src.generate_patches import CropImage
+from ml_model_src.src.utility import parse_model_name
 
 warnings.filterwarnings('ignore')
 
