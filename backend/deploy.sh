@@ -27,16 +27,16 @@ environment_variables_file="backend/.env"
 cat << EOF > "$environment_variables_file"
 DEBUG=0
 DJANGO_ALLOWED_HOSTS=localhost
-SECRET_KEY='django-insecure-7=4n(di4tfh13+__prvqy7jz3gf*=i2k+g-zbh$473axf^h60!'
+SECRET_KEY=django-secret-key
 SQL_ENGINE=django.db.backends.postgresql
-SQL_DATABASE=attendsensedb
-SQL_USER=postgres
-SQL_PASSWORD=attendsensePassword
-SQL_HOST=34.93.209.162
+SQL_DATABASE=databaseName
+SQL_USER=dbusername
+SQL_PASSWORD=dbPassword
+SQL_HOST=publicIPOfDatabase
 SQL_PORT=5432
-RABBITMQ_USER=user435
-RABBITMQ_PASSWORD=pass4934
-RABBITMQ_HOST=10.0.0.3
+RABBITMQ_USER=rabbitmqUser
+RABBITMQ_PASSWORD=rabbitmqPassword
+RABBITMQ_HOST=privateIPOfRabbitMQ
 RABBITMQ_PORT=5672
 RABBITMQ_QUEUE=attendance_queue
 EOF
