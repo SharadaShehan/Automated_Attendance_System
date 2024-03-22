@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/utilities/persistent_store.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import '../utilities/providers.dart';
 import 'package:animate_do/animate_do.dart';
@@ -132,7 +134,9 @@ class _LoginPageState extends State<LoginPage> {
                       FadeInUp(
                           duration: const Duration(milliseconds: 1600),
                           child: MaterialButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              await setToken("token2");
+                            },
                             height: 50,
                             // margin: EdgeInsets.symmetric(horizontal: 50),
                             color: Colors.blue.shade500,
@@ -144,6 +148,30 @@ class _LoginPageState extends State<LoginPage> {
                             child: const Center(
                               child: Text(
                                 "Login",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          )),
+                      FadeInUp(
+                          duration: const Duration(milliseconds: 1600),
+                          child: MaterialButton(
+                            onPressed: () async {
+                              String acc_token = await getToken();
+                              print("token : \n${acc_token}");
+                            },
+                            height: 50,
+                            // margin: EdgeInsets.symmetric(horizontal: 50),
+                            color: Colors.blue.shade500,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            // decoration: BoxDecoration(
+                            // ),
+                            child: const Center(
+                              child: Text(
+                                "Test Token",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold),

@@ -3,7 +3,7 @@ import 'utilities/providers.dart';
 import 'pages/login_page.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (_) => GlobalVariablesProvider(),
