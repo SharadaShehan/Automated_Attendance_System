@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'utilities/providers.dart';
 import 'pages/login_page.dart';
 import 'package:provider/provider.dart';
+import 'pages/home_page.dart';
 
 void main() async {
   runApp(
@@ -15,11 +16,9 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<GlobalVariablesProvider>(context);
-    print('isLoggedIn: ${provider.isLoggedIn}');
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -29,13 +28,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: Scaffold(
-        // appBar: AppBar(
-        //   title: const Text('AttendSense'),
-
-        // ),
-        body: provider.isLoggedIn
-            ? const Center(child: Text('Welcome!'))
-            : LoginPage(),
+        body: provider.isLoggedIn ? const HomePage() : LoginPage(),
       ),
     );
   }
