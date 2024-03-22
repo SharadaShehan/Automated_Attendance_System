@@ -22,7 +22,6 @@ class _AccountDetailsState extends State<AccountDetails> {
           Text('Last Name: ${user.lastName}'),
           Text('Email: ${user.email}'),
           Text('Role: ${user.roleName}'),
-          Text('Attendance: ${user.attendance}'),
           Text('Notifications: ${user.notifications}'),
         ],
       ),

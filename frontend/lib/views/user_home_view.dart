@@ -3,14 +3,14 @@ import 'package:frontend/utilities/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/utilities/persistent_store.dart';
 
-class AdminHomeView extends StatefulWidget {
-  const AdminHomeView({super.key});
+class UserHomeView extends StatefulWidget {
+  const UserHomeView({super.key});
 
   @override
-  State<AdminHomeView> createState() => _AdminHomeViewState();
+  State<UserHomeView> createState() => _UserHomeViewState();
 }
 
-class _AdminHomeViewState extends State<AdminHomeView> {
+class _UserHomeViewState extends State<UserHomeView> {
   int selectedViewIndex = 0;
   bool isLoading = false;
 
@@ -29,17 +29,16 @@ class _AdminHomeViewState extends State<AdminHomeView> {
   Widget build(BuildContext context) {
     final provider = Provider.of<GlobalVariablesProvider>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Home Page'),
-        actions: [
-          IconButton(
-            onPressed: () => logOut(provider),
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-          ),
-        ],
-      ),
-      body: const Text("Admin Home Page"),
-    );
+        appBar: AppBar(
+          title: const Text('User Home Page'),
+          actions: [
+            IconButton(
+              onPressed: () => logOut(provider),
+              icon: const Icon(Icons.logout),
+              tooltip: 'Logout',
+            ),
+          ],
+        ),
+        body: const Text("User Home Page"));
   }
 }
