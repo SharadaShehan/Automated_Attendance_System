@@ -10,6 +10,10 @@ class EmployeeAttendance extends StatefulWidget {
 class _EmployeeAttendanceState extends State<EmployeeAttendance> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      child: const Center(
+        child: Text('Employee Attendance'),
+      ),
+    );
   }
 }
