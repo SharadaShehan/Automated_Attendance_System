@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class EmployeeAttendance extends StatefulWidget {
-  const EmployeeAttendance({super.key});
+  final int id;
+  const EmployeeAttendance({super.key, required this.id});
 
   @override
   State<EmployeeAttendance> createState() => _EmployeeAttendanceState();
@@ -11,9 +12,7 @@ class _EmployeeAttendanceState extends State<EmployeeAttendance> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: const Center(
-        child: Text('Employee Attendance'),
-      ),
+      child: Text('Employee id: ${widget.id}'),
     );
   }
 }
