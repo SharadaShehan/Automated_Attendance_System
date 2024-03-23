@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: Scaffold(
-        body: provider.isLoggedIn ? const HomePage() : LoginPage(),
+        body: provider.isLoggedIn ? const HomePage() : const LoginPage(),
       ),
     );
   }

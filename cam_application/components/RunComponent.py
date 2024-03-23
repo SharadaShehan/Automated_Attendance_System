@@ -128,22 +128,29 @@ class SpeechThread(Thread):
     def __init__(self, parent):
         super().__init__()
         self.parent = parent
-        self.client = paho.Client("mqttClient", protocol=paho.MQTTv31)
+        # self.client = paho.Client("mqttClient", protocol=paho.MQTTv31)
+        self.client = paho.Client(client_id="pcClient1", clean_session=True, userdata=None, protocol=paho.MQTTv31)
         self.client.on_message = self.on_message
+        self.client.on_subscribe = self.on_subscribe
+        self.client.on_log = self.on_log
         self.host = self.parent.config_dict['MQTT']['host']
         self.port = int(self.parent.config_dict['MQTT']['port'])
         self.topic = self.parent.config_dict['MQTT']['topic']
         self.user = self.parent.config_dict['MQTT']['user']
         self.password = self.parent.config_dict['MQTT']['password']
+        self.auth_token = self.parent.config_dict['MQTT']['auth_token']
         self.engine = pyttsx3.init()
 
     def run(self):
         try:
+            self.client.username_pw_set(self.user, self.password)
             if self.client.connect(self.host, self.port, 60) == 0:
-                self.client.subscribe(self.topic)
+                self.client.subscribe(self.topic, qos=1)
                 self.parent.speech_state_label.config(text="Running")
+                self.client.loop_start()
                 while self.parent.speech_thread_state.get():
-                    self.client.loop(0.5)
+                    pass
+                self.client.loop_stop()
                 self.client.disconnect()
             else:
                 self.parent.show_error_message("Connection to MQTT Broker Failed")
@@ -154,9 +161,16 @@ class SpeechThread(Thread):
         self.parent.speech_button.config(text="Start")
         self.parent.speech_thread_state.set(False)
 
-    def on_message(self, client, userdata, message):
-        message = pickle.loads(message.payload)
-        print(message)
+    def on_subscribe(self, client, userdata, mid, granted_qos):
+        print("Subscribed: "+str(mid)+" "+str(granted_qos))
+
+    def on_log(self, client, userdata, level, string):
+        print(string)
+
+    def on_message(self, client, userdata, msg):
+        message = pickle.loads(msg.payload)
+        if message['auth_token'] != self.auth_token:
+            return
         text_to_speak = ('Hello ' if message['entrance'] == 1 else 'Goodbye ') + \
                         ("Mr. " if message['gender'] == 'Male' else "Ms. ") + \
                         message['first_name'] + ' ' + message['last_name']

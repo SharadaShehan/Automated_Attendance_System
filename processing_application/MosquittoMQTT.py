@@ -39,12 +39,14 @@ def publish_event(client, message):
 def attendance_updated_event(client, db_conn, user_id, entrance):
     """Publishes an attendance update event to the MQTT broker."""
     user_data = get_user_data(user_id, db_conn)
+    auth_token = os.getenv('MQTT_AUTH_TOKEN')
     message = {
         "first_name": user_data[2],
         "last_name": user_data[3],
         "gender": user_data[4],
         "entrance": int(entrance),
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "auth_token": auth_token
     }
     success = publish_event(client, pickle.dumps(message))
     return success

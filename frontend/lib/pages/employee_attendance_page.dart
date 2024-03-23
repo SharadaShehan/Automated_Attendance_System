@@ -3,7 +3,9 @@ import 'package:frontend/views/employee_attendance.dart';
 
 class EmployeeAttendancePage extends StatefulWidget {
   final int id;
-  const EmployeeAttendancePage({super.key, required this.id});
+  final String date;
+  const EmployeeAttendancePage(
+      {super.key, required this.id, required this.date});
 
   @override
   State<EmployeeAttendancePage> createState() => _EmployeeAttendancePageState();
@@ -16,7 +18,7 @@ class _EmployeeAttendancePageState extends State<EmployeeAttendancePage> {
       appBar: AppBar(
         title: const Text('Employee Attendance'),
       ),
-      body: EmployeeAttendance(id: widget.id),
+      body: EmployeeAttendance(id: widget.id, date: widget.date),
     );
   }
 }

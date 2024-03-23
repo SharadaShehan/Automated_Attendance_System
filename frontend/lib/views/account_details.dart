@@ -15,16 +15,14 @@ class _AccountDetailsState extends State<AccountDetails> {
   Widget build(BuildContext context) {
     final provider = Provider.of<GlobalVariablesProvider>(context);
     User? user = provider.user;
-    return Container(
-      child: Column(
-        children: [
-          Text('First Name: ${user!.firstName}'),
-          Text('Last Name: ${user.lastName}'),
-          Text('Email: ${user.email}'),
-          Text('Role: ${user.roleName}'),
-          Text('Notifications: ${user.notifications}'),
-        ],
-      ),
+    return Column(
+      children: [
+        Text('First Name: ${user!.firstName}'),
+        Text('Last Name: ${user.lastName}'),
+        Text('Email: ${user.email}'),
+        Text('Role: ${user.roleName}'),
+        Text('Notifications: ${user.notifications}'),
+      ],
     );
   }
 }

@@ -24,7 +24,7 @@ class _EmployeesAttendanceState extends State<EmployeesAttendance> {
     _userAttendanceList = null;
     final token = await getToken();
     final userAttendanceList = await AttendanceByDateApi.getAttendanceByDate(
-        token!, _selectedDay.toString());
+        token, _selectedDay.toString());
     if (userAttendanceList == null) {
       await removeToken();
       provider.updateLogout();
@@ -44,63 +44,59 @@ class _EmployeesAttendanceState extends State<EmployeesAttendance> {
     if (_userAttendanceList == null) {
       getUserAttendanceByDate(provider);
     }
-    return Container(
-      child: Column(
-        children: [
-          TableCalendar(
-            daysOfWeekHeight: 20.0,
-            rowHeight: 40.0,
-            firstDay: DateTime.utc(2024, 3, 1),
-            lastDay: DateTime.utc(2024, 3, 31),
-            focusedDay: _focusedDay,
-            selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
-            },
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-                getUserAttendanceByDate(provider);
-              });
-            },
-            calendarFormat: _calendarFormat,
-            onFormatChanged: (format) {
-              setState(() {
-                _calendarFormat = format;
-              });
-            },
-            onPageChanged: (focusedDay) {
+    return Column(
+      children: [
+        TableCalendar(
+          daysOfWeekHeight: 20.0,
+          rowHeight: 40.0,
+          firstDay: DateTime.utc(2024, 3, 1),
+          lastDay: DateTime.utc(2024, 3, 31),
+          focusedDay: _focusedDay,
+          selectedDayPredicate: (day) {
+            return isSameDay(_selectedDay, day);
+          },
+          onDaySelected: (selectedDay, focusedDay) {
+            setState(() {
+              _selectedDay = selectedDay;
               _focusedDay = focusedDay;
-            },
-          ),
-          _userAttendanceList == null
-              ? const CircularProgressIndicator()
-              : Expanded(
-                  child: ListView.builder(
-                    itemCount: _userAttendanceList!.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(_userAttendanceList![index]
-                                .firstName
-                                .toString() +
-                            ' ' +
-                            _userAttendanceList![index].lastName.toString()),
-                        subtitle: Text('Item subtitle'),
-                        leading: Icon(Icons.star),
-                        trailing: Icon(Icons.chevron_right),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EmployeeAttendancePage(
-                                      id: _userAttendanceList![index].id)));
-                        },
-                      );
-                    },
-                  ),
+              getUserAttendanceByDate(provider);
+            });
+          },
+          calendarFormat: _calendarFormat,
+          onFormatChanged: (format) {
+            setState(() {
+              _calendarFormat = format;
+            });
+          },
+          onPageChanged: (focusedDay) {
+            _focusedDay = focusedDay;
+          },
+        ),
+        _userAttendanceList == null
+            ? const CircularProgressIndicator()
+            : Expanded(
+                child: ListView.builder(
+                  itemCount: _userAttendanceList!.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                          '${_userAttendanceList![index].firstName.toString()} ${_userAttendanceList![index].lastName.toString()}'),
+                      subtitle: const Text('Item subtitle'),
+                      leading: const Icon(Icons.star),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EmployeeAttendancePage(
+                                    id: _userAttendanceList![index].id,
+                                    date: _selectedDay.toString())));
+                      },
+                    );
+                  },
                 ),
-        ],
-      ),
+              ),
+      ],
     );
   }
 }

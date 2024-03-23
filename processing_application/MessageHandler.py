@@ -79,7 +79,11 @@ def update_entrance(user_id, db_conn):
 
     try:
         user_data = get_user_data(user_id, db_conn)
-        attendance_obj = user_data[1]
+        if type(user_data[1]) == str:
+            attendance_obj = json.loads(user_data[1])
+        else:
+            attendance_obj = user_data[1]
+
         # Check if the date is already in the attendance object unlless create it
         attendance_obj = format_attendance_object(date_strings_list, attendance_obj)
         # update the entrance times list for the current day
@@ -109,7 +113,10 @@ def update_leave(user_id, db_conn):
 
     try:
         user_data = get_user_data(user_id, db_conn)
-        attendance_obj = user_data[1]
+        if type(user_data[1]) == str:
+            attendance_obj = json.loads(user_data[1])
+        else:
+            attendance_obj = user_data[1]
         # Check if the date is already in the attendance object unlless create it
         attendance_obj = format_attendance_object(date_strings_list, attendance_obj)
         # update the leave times list for the current day
