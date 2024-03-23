@@ -10,7 +10,7 @@ class ExecutiveViewEmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'email', 'role_name', 'has_read_permission', 'has_edit_permission', 'first_name', 'last_name', 'picture',
-                  'attendance']
+                  'attendance', 'notifications']
 
     def get_role_name(self, obj):
         try:
