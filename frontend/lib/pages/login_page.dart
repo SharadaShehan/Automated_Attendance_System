@@ -47,9 +47,14 @@ class _LoginPageState extends State<LoginPage> {
     provider.setAdmin(user.hasReadPermission);
     provider.setUser(user);
     provider.updateLogin();
-    setState(() {
-      isLoading = false;
-    });
+    await setUserId(user.id);
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+    int? userId = await getUserId();
+    print("user id : $userId");
   }
 
   @override

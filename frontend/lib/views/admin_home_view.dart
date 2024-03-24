@@ -21,6 +21,7 @@ class _AdminHomeViewState extends State<AdminHomeView> {
       isLoading = true;
     });
     await removeToken();
+    await removeUserId();
     provider.updateLogout();
     setState(() {
       isLoading = false;

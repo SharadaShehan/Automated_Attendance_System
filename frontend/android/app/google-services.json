@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "762613099233",
+    "project_id": "attendsense",
+    "storage_bucket": "attendsense.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762613099233:android:b74c646df21b97c4db65a0",
+        "android_client_info": {
+          "package_name": "com.example.attendsense.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWBddYi7KeBhcoCLQdEgl3HNXTugfXpv8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -13,7 +13,7 @@ class User {
   String firstName;
   String lastName;
   dynamic picture;
-  String attendance;
+  dynamic attendance;
   bool notifications;
 
   User({

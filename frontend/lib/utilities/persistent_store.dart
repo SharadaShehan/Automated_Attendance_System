@@ -15,3 +15,19 @@ Future<void> removeToken() async {
   SharedPreferences store = await SharedPreferences.getInstance();
   await store.remove('token');
 }
+
+Future<int?> getUserId() async {
+  SharedPreferences store = await SharedPreferences.getInstance();
+  int? userId = (store.getInt('userId'));
+  return userId;
+}
+
+Future<void> setUserId(int userId) async {
+  SharedPreferences store = await SharedPreferences.getInstance();
+  await store.setInt('userId', userId);
+}
+
+Future<void> removeUserId() async {
+  SharedPreferences store = await SharedPreferences.getInstance();
+  await store.remove('userId');
+}

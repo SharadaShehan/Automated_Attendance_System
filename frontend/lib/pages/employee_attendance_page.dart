@@ -16,7 +16,16 @@ class _EmployeeAttendancePageState extends State<EmployeeAttendancePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Employee Attendance'),
+        title: const Padding(
+          padding: EdgeInsets.fromLTRB(0, 0, 45, 0),
+          child: Center(child: Text('Employee Attendance Page')),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.blue.shade500,
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 20.0,
+        ),
       ),
       body: EmployeeAttendance(id: widget.id, date: widget.date),
     );

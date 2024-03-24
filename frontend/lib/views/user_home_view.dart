@@ -21,6 +21,7 @@ class _UserHomeViewState extends State<UserHomeView> {
       isLoading = true;
     });
     await removeToken();
+    await removeUserId();
     provider.updateLogout();
     setState(() {
       isLoading = false;
