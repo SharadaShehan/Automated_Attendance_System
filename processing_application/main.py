@@ -3,6 +3,7 @@ from Database import connect_to_database, get_users_data
 from RabbitMQ import connect_to_rabbitmq, process_messages, process_single_message
 from MessageHandler import callback_function
 from MosquittoMQTT import connect_to_mqtt
+from CloudMonitoring import get_monitoring_obj
 
 def main():
     db_conn = connect_to_database()
@@ -26,7 +27,9 @@ def main():
         return
     print(users_data)
 
-    partial_callback = functools.partial(callback_function, users_data, db_conn, mqtt_client)
+    monitoringObj = get_monitoring_obj()
+
+    partial_callback = functools.partial(callback_function, users_data, db_conn, mqtt_client, monitoringObj)
 
     process_messages(rabbitmq_channel, partial_callback)
 

@@ -6,11 +6,14 @@ from Database import get_user_data, update_user_attendance
 from dotenv import load_dotenv
 from MosquittoMQTT import attendance_updated_event
 
+
 load_dotenv()
 
-def callback_function(users_data, db_conn, mqtt_client, ch, method, properties, body):
+def callback_function(users_data, db_conn, mqtt_client, monitoringObj, ch, method, properties, body):
     """Callback function to process messages from the RabbitMQ queue."""
     try:
+
+        monitoringObj.write_new_message_metric(1.0)
         # Decode the message
         message = pickle.loads(body)
         photo = message['photo']
@@ -30,12 +33,15 @@ def callback_function(users_data, db_conn, mqtt_client, ch, method, properties, 
 
         # Publish a message to the MQTT broker
         if success:
+            monitoringObj.write_attendance_updated_metric(1.0)
             attendance_updated_event(mqtt_client, db_conn, user_id, entrance)
+            monitoringObj.write_mqtt_publish_metric(1.0)
 
         # Acknowledge the message
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     except (Exception) as error:
+        monitoringObj.write_error_metric(1.0)
         print("Error while processing message:", error)
         ch.basic_nack(delivery_tag=method.delivery_tag)
 

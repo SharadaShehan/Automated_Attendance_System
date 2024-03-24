@@ -9,3 +9,5 @@ db.sqlite3
 *.env
 .vscode
 .idea
+serviceAccountKey.json
+*.json
