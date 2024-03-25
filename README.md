@@ -279,6 +279,8 @@
 
 * Linux OS - Production Environment Setup
 
+  First, set VPC firewall to allow 0.0.0.0/0 traffic to tcp:1883 with tag 'mqtt'. Then add tag 'mqtt' to the VM instance that runs the MQTT broker.
+
 1) Run below commands to install and run Mosquitto MQTT broker in a VM. Replace `username` and `password` with your desired username and password.
 
     ```
