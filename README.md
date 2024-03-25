@@ -61,3 +61,6 @@ For communication between the processing application and the Camera Stream Appli
 
 The PostgreSQL database, hosted on Google Cloud SQL, adheres to rigorous encryption protocols both at rest and in transit. Access to the database is rigorously controlled, allowing only virtual machines running the backend and processing application to interact with it, thus fortifying data integrity and confidentiality.
 
+<br>
+
+#### Refer `dev` branch for development and deployment guidelines.
