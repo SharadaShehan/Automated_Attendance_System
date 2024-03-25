@@ -7,6 +7,11 @@
 
 ## Cam Stream Application
 
+Camera Stream Application provides User Interface to initialize system with credentials, register new users into system and configure camera input devices. Image processing techniques were employed with help of OpenCv and Numpy modules, to detect changes in image flow and thus optimize performance by minimizing API calls to backend server. 
+
+Additionally, the subscription to relevant MQTT topic, enables the application to receive real-time attendance updates from processing application. The application
+utilizes python text-to-speech module to enhance user experience by verbally greeting the user with a message, crafted by processing the data received from MQTT broker.
+
 <p float="left">
   <img src="resources/cam_app_config.png" width="37%" />
   <img src="resources/cam_app_register_user.png" width="30%" /> 
@@ -43,3 +48,16 @@ Administrators, on the other hand, are empowered with comprehensive insights int
   <img src="resources/mobile_employees_attendance3.png" width="32%" /> 
   <img src="resources/mobile_employee_attendance.png" width="32%" />
 </p>
+
+## Security Features
+
+The system was deployed within a Virtual Private Cloud (VPC) on the Google Cloud Platform (GCP) to establish secure communication channels between applications. Robust firewall rules are implemented to strictly control unauthorized access to the system.
+
+To ensure secure communication between the backend and the Camera Stream Application, multiple layers of security measures are employed. This includes enforcing a stringent password policy, utilizing authentication access tokens, and encrypting communication channels using Fernet (Symmetric Encryption).
+
+The AMQP broker is configured to permit message production and consumption solely from applications within the private network. Additionally, it employs basic authentication mechanisms to guarantee secure communication between the backend and processing application.
+
+For communication between the processing application and the Camera Stream Application, the MQTT broker employs a combination of token-based and basic authentication methods, further enhancing security measures.
+
+The PostgreSQL database, hosted on Google Cloud SQL, adheres to rigorous encryption protocols both at rest and in transit. Access to the database is rigorously controlled, allowing only virtual machines running the backend and processing application to interact with it, thus fortifying data integrity and confidentiality.
+
