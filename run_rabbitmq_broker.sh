@@ -48,15 +48,15 @@ sudo apt-get install rabbitmq-server -y --fix-missing
 # Start RabbitMQ server
 sudo systemctl enable rabbitmq-server
 sudo systemctl start rabbitmq-server
-sudo systemctl status rabbitmq-server
 
 # Create a new user, set permissions and create a queue
 sudo rabbitmq-plugins enable rabbitmq_management
 sudo rabbitmqctl add_user "$user_name" "$password"
 sudo rabbitmqctl set_permissions -p "/" "$user_name" ".*" ".*" ".*"
 sudo rabbitmqctl set_user_tags "$user_name" administrator
-curl -X PUT "http://localhost:15672/api/queues/%2F/$queue_name" \
+sudo curl -X PUT "http://localhost:15672/api/queues/%2F/$queue_name" \
   -u "$username:$password" -H 'Content-Type: application/json' \
   -d '{"durable": true}'
 
-
+# Print success message
+echo "RabbitMQ broker is successfully set up with user $user_name and queue $queue_name"
