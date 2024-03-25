@@ -10,11 +10,10 @@ fi
 distribution_name="$1"
 user_name="$2"
 password="$3"
-queue_name="$4"
 
 # Check if all arguments are provided
-if [ -z "$distribution_name" ] || [ -z "$user_name" ] || [ -z "$password" ] || [ -z "$queue_name" ]; then
-  echo "Please provide all arguments: distribution_name, user_name, password, queue_name"
+if [ -z "$distribution_name" ] || [ -z "$user_name" ] || [ -z "$password" ]; then
+  echo "Usage: $0 <distribution-name> <user-name> <password>"
   exit 1
 fi
 
